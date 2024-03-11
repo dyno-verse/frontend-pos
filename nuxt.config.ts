@@ -1,4 +1,24 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+// @ts-ignore
 export default defineNuxtConfig({
-  devtools: { enabled: true }
+    app: {
+        baseURL: '/',
+        head: {
+            charset: 'utf-8',
+            viewport: 'width=device-width, initial-scale=1',
+        },
+        buildAssetsDir: 'assets',
+        pageTransition: {name: 'page', mode: 'out-in'}
+    },
+    modules: [
+        // '@sidebase/nuxt-auth',
+        '@nuxtjs/tailwindcss',
+        'nuxt-snackbar'
+    ],
+    snackbar: {
+        bottom: true,
+        right: true,
+        duration: 5000
+    },
+    devtools: {enabled: true}
 })

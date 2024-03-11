@@ -10,8 +10,14 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "flowbite": "^2.3.0",
     "nuxt": "^3.10.2",
+    "nuxt-snackbar": "^1.0.4",
     "vue": "^3.4.19",
     "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.11.4",
+    "tailwindcss": "^3.4.1"
   }
 }

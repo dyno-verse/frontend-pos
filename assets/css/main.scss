@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Work Sans", sans-serif;
+  font-size: 1rem;
+}
+
+h1,h2,h3,h4,h5,h6{
+  font-weight: bolder;
+}
+
+body{
+  background-color: yellow;
+}
+.theme-light {
+
+}
+
+.theme-dark {
+
+}
