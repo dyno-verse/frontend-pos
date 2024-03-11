@@ -4,7 +4,7 @@
       <div v-for="i in 8" class="bg-gray-100 h-96 w-1/4 rounded-lg border p-5">
         <h3 class="text-5xl font-extrabold">00{{ i }}</h3>
         <p class="">Table #2</p>
-        <hr class="my-2">
+        <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
         <h3 class="text-xl my-2">Assorted fried rice</h3>
         <p class="my-4">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
