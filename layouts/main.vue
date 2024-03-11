@@ -39,10 +39,25 @@
       <slot/>
     </div>
 
+    <div class="bg-white border-t h-16 w-screen absolute bottom-0 left-0">
+      <div class="grid grid-cols-3 justify-items-center justify-between">
+        <div class="flex flex-row self-center text-center space-x-2 p-5" v-for="page in pages">
+          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
+                  d="M10 12v1h4v-1m4 7H6a1 1 0 0 1-1-1V9h14v9a1 1 0 0 1-1 1ZM4 5h16c.6 0 1 .4 1 1v2c0 .6-.4 1-1 1H4a1 1 0 0 1-1-1V6c0-.6.4-1 1-1Z"/>
+          </svg>
+          <p>{{ page}}</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script lang="ts" setup>
+
+const pages = ['Not Started', 'Preparation', 'Completed']
 
 </script>
 
