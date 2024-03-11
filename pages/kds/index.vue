@@ -1,24 +1,71 @@
 <template>
   <div class="container">
-    <div class="flex flex-row flex-wrap w-screen my-6 px-2">
-      <div v-for="i in 8" class="bg-gray-100 h-96 w-1/4 rounded-lg border p-5">
-        <h3 class="text-5xl font-extrabold">00{{ i }}</h3>
+    <div v-if="!isPending" class="grid grid-cols-5 gap-4 items-center justify-items-stretch content-start m-4">
+
+      <div v-for="(order, index) in orders" class="bg-gray-50 w-full rounded-lg border p-5">
+        <h3 class="text-5xl font-extrabold">00{{ order.orderNumber }}</h3>
         <p class="">Table #2</p>
         <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
-        <h3 class="text-xl my-2">Assorted fried rice</h3>
-        <p class="my-4">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua
-        </p>
+
+        <div v-for="o in order.orderItems">
+          <h3 class="text-xl my-2">{{ o.item.name }}</h3>
+          <p class="my-4 text-gray-500">
+
+          </p>
+          <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+        </div>
+
+        <div class="flex flex-wrap space-x-2">
+          <svg class="w-6 h-6 text-gray-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7.6 8.5h8m-8 3.5H12m7.1-7H5c-.2 0-.5 0-.6.3-.2.1-.3.3-.3.6V15c0 .3 0 .5.3.6.1.2.4.3.6.3h4l3 4 3-4h4.1c.2 0 .5 0 .6-.3.2-.1.3-.3.3-.6V6c0-.3 0-.5-.3-.6a.9.9 0 0 0-.6-.3Z"/>
+          </svg>
+          <p class="text-gray-500">
+            {{ order.kitchenNote }}
+          </p>
+        </div>
+
       </div>
+    </div>
+    <div class="w-screen text-center h-full py-48" v-else>
+      <Loader/>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+
+
+// import {IOrders} from "~/repository/models/ApiResponse";
+
+import Loader from "~/components/units/Loader.vue";
+
 definePageMeta({
   layout: "main",
 });
+
+const isPending = ref(true)
+const {$api} = useNuxtApp();
+const orders = ref({})
+
+onMounted(() => {
+  getAllOrders()
+})
+
+
+const getAllOrders = () => {
+  isPending.value = true;
+  $api.order.getAllOrders('340328b2-cec0-4c5c-ba57-37a0f33dcf66').then(data => {
+    orders.value = data.data
+    isPending.value = false
+    console.log(data.data)
+  }).catch(error => {
+    isPending.value = false
+  })
+}
+
+
 </script>
 
 <style scoped>
