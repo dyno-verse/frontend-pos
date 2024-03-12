@@ -1,13 +1,15 @@
 import HttpFactory from "~/repository/factory";
 import {IApiResponse} from "~/repository/models/appData";
 import {IOrders} from "~/repository/models/ApiResponse";
+import {KitchenStatus} from "~/repository/models/ApiResponse";
+
 
 class OrdersModule extends HttpFactory {
     private RESOURCE = 'orders';
 
 
-    async getAllOrders(branchId: string): Promise<IApiResponse<IOrders>> {
-        return await this.call<IApiResponse<IOrders>>('GET', `/${this.RESOURCE}/branch/${branchId}?kitchenStatus=NOT_STARTED`)
+    async getAllOrders(branchId: string, kitchenStatus: KitchenStatus): Promise<IApiResponse<IOrders>> {
+        return await this.call<IApiResponse<IOrders>>('GET', `/${this.RESOURCE}/branch/${branchId}?kitchenStatus=${kitchenStatus}`)
     }
 
 

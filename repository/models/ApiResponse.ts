@@ -150,3 +150,10 @@ export interface Item {
     updatedAt: string
 }
 
+// NOT_STARTED,PREPARING,READY_TO_SERVE
+enum KitchenStatus {
+    NOT_STARTED = 'NOT_STARTED',
+    PREPARING = 'PREPARING',
+    READY_TO_SERVE = 'READY_TO_SERVE'
+}
+

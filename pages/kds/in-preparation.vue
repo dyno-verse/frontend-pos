@@ -3,7 +3,7 @@
     <div v-if="!isPending"
          class="grid grid-cols-5 gap-4 auto-rows-fr items-center justify-items-stretch content-start m-4">
 
-      <div v-for="(order, index) in orders" class="bg-red-50 w-full h-full rounded-lg border border-red-500 p-5"
+      <div v-for="(order, index) in orders" class="bg-yellow-50 w-full h-full rounded-lg border border-yellow-500 p-5"
            @dblclick="doSomething()">
         <h3 class="text-5xl font-extrabold">00{{ order.orderNumber }}</h3>
         <p class="">Table #2</p>
@@ -43,28 +43,20 @@
 const snackbar = useSnackbar();
 
 // import {IOrders} from "~/repository/models/ApiResponse";
-
 import Loader from "~/components/units/Loader.vue";
-
-definePageMeta({
-  layout: "main",
-});
 
 const isPending = ref(true)
 const {$api} = useNuxtApp();
 const orders = ref({})
 
+definePageMeta({
+  layout: "main",
+});
+
+
 onMounted(() => {
   getAllOrders()
 })
-
-const doSomething = () => {
-  snackbar.add({
-    type: 'success',
-    text: 'Image uploaded'
-  })
-}
-
 
 // NOT_STARTED,PREPARING,READY_TO_SERVE
 enum KitchenStatus {
@@ -72,8 +64,6 @@ enum KitchenStatus {
   PREPARING = 'PREPARING',
   READY_TO_SERVE = 'READY_TO_SERVE'
 }
-
-
 
 
 const getAllOrders = () => {
