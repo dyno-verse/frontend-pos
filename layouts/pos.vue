@@ -1,6 +1,6 @@
 <template>
   <div class="container h-screen h-lvh	">
-    <div class="bg-white border-b h-16 w-screen absolute top-0 left-0">
+    <div class="bg-white border-b h-16 w-screen static absolute top-0 left-0">
       <div class="flex justify-between px-4 py-2 space-x-2">
         <div>
           <h1 class="text-2xl">Dyno menu</h1>
@@ -19,22 +19,47 @@
       </div>
     </div>
 
+    <div>
+      <slot/>
+    </div>
+
     <div class="bg-white border-t h-16 w-screen absolute bottom-0 left-0">
-      <div class="grid grid-cols-5 justify-items-center">
-        <div class="flex flex-row self-center text-center space-x-2 p-5" v-for="i in 5">
-          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-               fill="none" viewBox="0 0 24 24">
-            <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
-                  d="M10 12v1h4v-1m4 7H6a1 1 0 0 1-1-1V9h14v9a1 1 0 0 1-1 1ZM4 5h16c.6 0 1 .4 1 1v2c0 .6-.4 1-1 1H4a1 1 0 0 1-1-1V6c0-.6.4-1 1-1Z"/>
-          </svg>
-          <p>Register</p>
-        </div>
+      <div class="grid grid-cols-3 justify-items-center justify-between">
+        <NuxtLink active-class="text-red-500 border-t-4 border-red-500 rounded-t" v-for="page in pages" :to="page.url">
+          <div class="flex flex-row self-center text-center space-x-2 p-5">
+            <svg class="w-6 h-6 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                 fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
+                    d="M10 12v1h4v-1m4 7H6a1 1 0 0 1-1-1V9h14v9a1 1 0 0 1-1 1ZM4 5h16c.6 0 1 .4 1 1v2c0 .6-.4 1-1 1H4a1 1 0 0 1-1-1V6c0-.6.4-1 1-1Z"/>
+            </svg>
+            <p>{{ page.name }}</p>
+          </div>
+        </NuxtLink>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+
+
+const pages = [
+  {
+    name: 'Menus',
+    icon: '',
+    url: '/pos/menu'
+  },
+  {
+    name: 'Orders',
+    icon: '',
+    url: '/pos/orders'
+  },
+  {
+    name: 'Settings',
+    icon: '',
+    url: '/pos/settings'
+  }
+]
 
 </script>
 
