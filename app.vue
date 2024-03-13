@@ -6,20 +6,24 @@
     <NuxtSnackbar/>
   </div>
 </template>
+
+<script lang="ts" setup>
+</script>
+
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-* {
-  font-family: "Work Sans", sans-serif;
-  font-size: 1rem;
+body {
+  background-color: #F2F2F2;
+  color: rgba(0, 0, 0, 1);
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: bolder;
+.dark body {
+  background-color: #12141A;
+  color: #ebf4f1;
 }
+
+.sepia body {
+  background-color: #f1e7d0;
+  color: #433422;
+}
+
 </style>
