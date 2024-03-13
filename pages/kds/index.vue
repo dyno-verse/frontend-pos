@@ -38,10 +38,12 @@
 </template>
 
 <script lang="ts" setup>
+import {IOrders, KitchenStatus} from "../../repository/models/ApiResponse";
 
+const branchId = '340328b2-cec0-4c5c-ba57-37a0f33dcf66'
 const snackbar = useSnackbar();
+const orders = ref({} as IOrders)
 
-// import {IOrders} from "~/repository/models/ApiResponse";
 
 import Loader from "~/components/units/Loader.vue";
 
@@ -51,7 +53,6 @@ definePageMeta({
 
 const isPending = ref(true)
 const {$api} = useNuxtApp();
-const orders = ref({})
 
 onMounted(() => {
   getAllOrders()
@@ -65,19 +66,9 @@ const doSomething = () => {
 }
 
 
-// NOT_STARTED,PREPARING,READY_TO_SERVE
-enum KitchenStatus {
-  NOT_STARTED = 'NOT_STARTED',
-  PREPARING = 'PREPARING',
-  READY_TO_SERVE = 'READY_TO_SERVE'
-}
-
-
-
-
 const getAllOrders = () => {
   isPending.value = true;
-  $api.order.getAllOrders('340328b2-cec0-4c5c-ba57-37a0f33dcf66', KitchenStatus.NOT_STARTED).then(data => {
+  $api.order.getAllOrders(branchId, KitchenStatus.NOT_STARTED).then(data => {
     orders.value = data.data
     isPending.value = false
     console.log(data.data)
