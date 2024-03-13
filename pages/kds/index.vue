@@ -41,7 +41,7 @@
 
 const snackbar = useSnackbar();
 
-// import {IOrders} from "~/repository/models/ApiResponse";
+import {IOrders} from "../../repository/models/ApiResponse";
 
 import Loader from "~/components/units/Loader.vue";
 
@@ -71,8 +71,6 @@ enum KitchenStatus {
   PREPARING = 'PREPARING',
   READY_TO_SERVE = 'READY_TO_SERVE'
 }
-
-
 
 
 const getAllOrders = () => {

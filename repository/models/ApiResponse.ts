@@ -113,7 +113,7 @@ export interface Iitem {
     ingredients: string[];
 }
 
-export interface IOrders {
+export  interface IOrders {
     id: string
     branchId: string
     businessId: string
