@@ -40,6 +40,7 @@
 <script lang="ts" setup>
 
 
+
 const snackbar = useSnackbar();
 
 // import {IOrders} from "~/repository/models/ApiResponse";
@@ -68,7 +69,7 @@ enum KitchenStatus {
 
 const getAllOrders = () => {
   isPending.value = true;
-  $api.order.getAllOrders('340328b2-cec0-4c5c-ba57-37a0f33dcf66', KitchenStatus.NOT_STARTED).then(data => {
+  $api.order.getAllOrders('340328b2-cec0-4c5c-ba57-37a0f33dcf66', KitchenStatus.PREPARING).then(data => {
     orders.value = data.data
     isPending.value = false
     console.log(data.data)
