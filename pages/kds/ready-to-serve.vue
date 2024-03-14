@@ -1,16 +1,16 @@
 <template>
-  <div class="container">
+  <div class="mx-auto">
     <div v-if="!isPending"
-         class="grid grid-cols-5 gap-4 auto-rows-fr items-center justify-items-stretch content-start m-4">
+         class="grid grid-cols-6 gap-4 auto-rows-fr items-center justify-items-stretch content-start m-4">
 
-      <div v-for="(order, index) in orders" class="bg-green-50 w-full h-full rounded-lg border border-green-500 p-5"
-           @dblclick="doSomething()">
+      <div v-if="orders.length !== 0" v-for="(order, index) in orders" class="bg-green-50 w-full h-full rounded-lg border border-green-500 p-5"
+           @dblclick="updateOrderStatus(order.id, index)">
         <h3 class="text-5xl font-extrabold">00{{ order.orderNumber }}</h3>
-        <p class="">Table #2</p>
+        <p class="">Table #{{ order.tableNumber }}</p>
         <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
 
         <div v-for="o in order.orderItems">
-          <p class="text-xl my-2">{{ o.item.name }}</p>
+          <p class="text-xl my-2">{{ o.item.name }} (x{{ o.quantity}})</p>
           <p class="my-4 text-gray-500">
 
           </p>
@@ -30,6 +30,9 @@
         </div>
 
       </div>
+      <div v-else class="col-span-6 mt-12">
+        <EmptyState/>
+      </div>
     </div>
     <div class="w-screen text-center h-full py-48" v-else>
       <Loader/>
@@ -43,6 +46,7 @@ import {KitchenStatus} from "~/repository/models/ApiResponse";
 const snackbar = useSnackbar();
 import {IOrders} from "~/repository/models/ApiResponse";
 import Loader from "~/components/units/Loader.vue";
+import {IKitchenStatus} from "~/repository/models/ApiResponse";
 
 const branchId = '340328b2-cec0-4c5c-ba57-37a0f33dcf66'
 
@@ -58,6 +62,21 @@ definePageMeta({
 onMounted(() => {
   getAllOrders()
 })
+
+const updateOrderStatus = (orderId: string, position: number) => {
+  const request: IKitchenStatus = {
+    kitchenStatus: KitchenStatus.SERVED
+  }
+  orders.value.splice(position, 1)
+
+  $api.order.updateKitchenStatus(orderId, request).then(data => {
+    snackbar.add({
+      type: 'success',
+      text: 'Order moved'
+    })
+  }).catch(error => {
+  })
+}
 
 const getAllOrders = () => {
   isPending.value = true;

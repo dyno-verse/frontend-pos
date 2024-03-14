@@ -90,7 +90,6 @@ const getAllOrders = () => {
   })
 }
 
-
 </script>
 
 <style scoped>

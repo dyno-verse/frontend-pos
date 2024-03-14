@@ -2,6 +2,7 @@ import {resolve} from "node:path"
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 // @ts-ignore
+// @ts-ignore
 export default defineNuxtConfig({
     app: {
         baseURL: '/',
@@ -16,7 +17,8 @@ export default defineNuxtConfig({
     modules: [
         // '@sidebase/nuxt-auth',
         '@nuxtjs/tailwindcss',
-        'nuxt-snackbar'
+        'nuxt-snackbar',
+        // '@pinia/nuxt'
     ],
     snackbar: {
         bottom: true,
@@ -47,5 +49,5 @@ export default defineNuxtConfig({
     //     classSuffix: '',
     //     storageKey: 'nuxt-color-mode'
     // }
-  ssr: false
+    ssr: false
 })
