@@ -1,11 +1,18 @@
 <template>
-  <div class="w-screen">
+  <div class="w-screen bg-white">
     <div class="grid grid-cols-10 justify-center gap-x-4 pt-16 mt-2">
 
       <div class="static col-span-2 h-full overflow-y-auto border-r border-gray-200 ">
 
-        <div class="bg-gray-50 rounded-r-lg border-l-4 border-red-500 px-5 py-6 mb-2" v-for="i in 7">
-          <p class="text-gray-800 text-lg">Main Dishes</p>
+        <div v-if="!isMenusPending"
+             class="bg-gray-50 rounded-r-lg px-5 py-6 mb-2 cursor-pointer"
+             :class="[ selectedMenuId === menu.id ? 'bg-red-50  border-l-4 border-red-500 font-bold' : 'bg-gray-50']"
+             v-for="menu in menus" @click="selectMenu(menu.id)">
+          <p class="text-gray-800 text-lg">{{ menu.name }}</p>
+        </div>
+
+        <div v-else class="w-full my-48">
+          <Loader/>
         </div>
 
       </div>
@@ -30,18 +37,57 @@
           </form>
 
         </div>
-        <div class="grid grid-cols-3 gap-4">
+        <div>
 
-          <div class="bg-gray-100 rounded-lg p-5 text-center items-center justify-center flex flex-col" v-for="i in 15">
 
-            <svg class="w-6 h-6 text-gray-800 dark:text-white self-end" aria-hidden="true"
-                 xmlns="http://www.w3.org/2000/svg"
-                 width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
-                    d="M9 8v3a1 1 0 0 1-1 1H5m11 4h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1m4 3v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7.13a1 1 0 0 1 .24-.65L7.7 8.35A1 1 0 0 1 8.46 8H13a1 1 0 0 1 1 1Z"/>
-            </svg>
+          <div v-if="!isPending && isMenuCategories" class="grid grid-cols-3 gap-4">
+            <!---category-->
+            <div v-if="menuDetails.categories.length !== 0"
+                 class="bg-gray-100 cursor-pointer rounded-lg p-5 text-center items-center justify-center flex flex-col"
+                 v-for="category in menuDetails.categories" @click="getItemsByCategory(category.id)">
 
-            <p class="mb-10 mt-2">Alcoholic Drinks</p>
+              <svg class="w-6 h-6 text-gray-800 dark:text-white self-end" aria-hidden="true"
+                   xmlns="http://www.w3.org/2000/svg"
+                   width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2"
+                      d="M9 8v3a1 1 0 0 1-1 1H5m11 4h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-7a1 1 0 0 0-1 1v1m4 3v10a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-7.13a1 1 0 0 1 .24-.65L7.7 8.35A1 1 0 0 1 8.46 8H13a1 1 0 0 1 1 1Z"/>
+              </svg>
+
+              <p class="mb-10 mt-2">{{ category.name }}</p>
+            </div>
+            <div v-else class="w-full col-span-3">
+              <EmptyState/>
+            </div>
+          </div>
+          <div v-else-if="!isItemsPending && !isMenuCategories" class="grid grid-cols-3 gap-4">
+            <!---Item-->
+            <div v-if="items.length !== 0"
+                 @click="addToCart(item)"
+                 class="bg-white border-gray-100 border cursor-pointer rounded-lg p-5 text-center items-center justify-center flex flex-col"
+                 v-for="item in items">
+
+              <img v-if="item.imageUrl !== null" :src="item.imageUrl" class="w-32 h-32"/>
+              <div v-else
+                   class="relative  inline-flex items-center justify-center w-24 h-24 overflow-hidden bg-gray-900 rounded-full dark:bg-gray-600">
+                  <span
+                      class="font-medium text-gray-100 text-3xl dark:text-gray-300">{{
+                      getFirstTwoCharacters(item.name)
+                    }}</span>
+              </div>
+
+              <p class="text-center text-black text-lg">{{ item.name }}</p>
+              <h5 class="text-center text-black text-sm  font-extrabold">GHS {{ item.price }}</h5>
+            </div>
+            <div v-else class="w-full col-span-3">
+              <EmptyState/>
+            </div>
+          </div>
+          <div v-else>
+            <Loader/>
+          </div>
+
+          <div>
+
           </div>
 
         </div>
@@ -55,13 +101,13 @@
           </div>
 
           <div class="overflow-y-scroll h-[585px]">
-            <div class="flex flex-row justify-between items-center my-4" v-for="i in 34">
+            <div class="flex flex-row justify-between items-center my-4" v-for="cartItem in cartItems">
               <div class="flex-col flex">
-                <h3>Meal name</h3>
-                <p>Quantity: 5</p>
+                <h3>{{ cartItem.name }}</h3>
+                <p>Quantity: {{ cartItem.quantity }}</p>
               </div>
               <div>
-                <h3>GHS 20.90</h3>
+                <h3>GHS {{ cartItem.price }}</h3>
               </div>
             </div>
           </div>
@@ -106,9 +152,113 @@
 </template>
 
 <script lang="ts" setup>
+import {IBusinessInfo} from "~/repository/models/ApiResponse";
+import Loader from "~/components/units/Loader.vue";
+import {IMenuDetail} from "~/repository/models/ApiResponse";
+import {Iitem} from "#build/repository/models/ApiResponse";
+// import menu from "#build/repository/modules/menu";
+
 definePageMeta({
   layout: "pos",
 });
+const {$api} = useNuxtApp();
+const businessInfo = ref({} as IBusinessInfo)
+const isMenusPending = ref(true)
+const isItemsPending = ref(true)
+const isPending = ref(true)
+const selectedCategoryId = ref('')
+const selectedMenuId = ref('')
+const businessId = '72f16ef5-6b78-4504-80bd-16aef1c52b46'
+const menus = ref([])
+const items = ref([])
+const cartItems = ref([])
+const isMenuCategories = ref(true)
+const menuDetails = ref({} as IMenuDetail)
+
+
+onMounted(() => {
+  getBusinessById(businessId)
+})
+
+function getFirstTwoCharacters(sentence: string): string {
+  const words = sentence.split(' ');
+
+  if (words.length >= 2) {
+    const firstWord = words[0].slice(0, 1);
+    const secondWord = words[1].slice(0, 1);
+    return `${firstWord}${secondWord}`.toUpperCase();
+  } else {
+    return words[0].slice(0, 2).toUpperCase();
+  }
+}
+
+
+const getBusinessById = (id: string) => {
+  isMenusPending.value = true;
+  $api.business.getBusinessInfoById(id).then(data => {
+    businessInfo.value = data.data
+    menus.value = businessInfo.value.branches[0].menu
+
+    //Select first menu in the list
+    selectMenu(menus.value[0].id)
+    isMenusPending.value = false
+
+  }).catch(error => {
+    isMenusPending.value = false
+
+  })
+}
+
+const selectMenu = (menuId: string) => {
+  isMenuCategories.value = true
+  selectedMenuId.value = menuId
+  getDetailedMenu(menuId)
+}
+
+const searchItems = (itemName: string) => {
+  $api.item.searchItems('').then(data => {
+    console.log(data.data)
+  }).catch(error => {
+
+  })
+}
+
+const addToCart = (item: Iitem) => {
+  cartItems.value.push(item)
+  console.log(cartItems.value)
+}
+
+const getDetailedMenu = (menuId: string, categoryId?: string) => {
+  isPending.value = true
+  $api.menu.getMenusDetailsById(menuId).then(data => {
+    menuDetails.value = data.data;
+    isPending.value = false;
+  }).catch(error => {
+    isPending.value = false;
+
+  })
+}
+
+const getItemsByCategory = (categoryId: string) => {
+  isMenuCategories.value = false
+  isItemsPending.value = true
+
+  // selectedCategoryId.value = categoryId
+  // categoryItems.value.items = []
+
+  $api.category.getItemsUnderCategories(categoryId).then(data => {
+    isItemsPending.value = false
+
+    console.log(data.data)
+    items.value = data.data.items
+  }).catch(error => {
+    isItemsPending.value = false
+
+    // iscCategoryItemsLoading.value = false;
+  });
+}
+
+
 </script>
 
 <style scoped>
