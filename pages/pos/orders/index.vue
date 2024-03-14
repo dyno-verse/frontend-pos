@@ -3,8 +3,9 @@
     <div class="grid grid-cols-4">
       <div class="col-span-1 h-[845px] overflow-y-auto bg-gray-50 border-r border-gray-200">
 
-        <div v-if="!isPending" class="bg-white h-36 rounded-lg m-4 p-3 border border-gray-200"
-             :class="[selectedOrderId === order.id  ? 'bg-red-100' : 'bg-white']"
+        <div v-if="!isPending" class="h-36 rounded-lg m-4 p-3 border border-gray-200 cursor-pointer"
+             :class="[selectedOrderId === order.id  ? 'bg-red-50 border-red-100' : 'bg-white']"
+             @click="onOrderItemSelected(order.id)"
              v-for="order in orders">
           <div class="flex flex-row justify-between">
             <div>
@@ -16,11 +17,11 @@
               <h2 class="text-lg">GHS {{ order.total }}</h2>
               <div class="flex flex-row space-x-2 my-2">
                 <span
-                    class="bg-blue-100 text-blue-800 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{
+                    class="bg-gray-700 text-white text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{
                     order.paymentStatus
                   }}</span>
                 <span
-                    class="bg-yellow-100 text-yellow-800 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Cash</span>
+                    class="bg-red-500 text-white text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Cash</span>
               </div>
             </div>
           </div>
@@ -53,8 +54,8 @@ onMounted(() => {
   getAllOrders()
 })
 
-const onOrderItemSelected = () => {
-
+const onOrderItemSelected = (orderId: string) => {
+  selectedOrderId.value = orderId
 }
 
 

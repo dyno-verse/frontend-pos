@@ -109,11 +109,12 @@ export interface Iitem {
     description: string;
     color?: string;
     price: number;
+    quantity?: number;
     imageUrl?: string;
     ingredients: string[];
 }
 
-export  interface IOrders {
+export interface IOrders {
     id: string
     branchId: string
     businessId: string

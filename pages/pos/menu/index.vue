@@ -100,22 +100,47 @@
             <hr class="my-2">
           </div>
 
-          <div class="overflow-y-scroll h-[585px]">
-            <div class="flex flex-row justify-between items-center my-4" v-for="cartItem in cartItems">
+          <div class="overflow-y-scroll h-[450px]">
+            <div class="flex flex-row justify-between items-center my-4" v-for="(cartItem, index) in cartItems">
               <div class="flex-col flex">
                 <h3>{{ cartItem.name }}</h3>
                 <p>Quantity: {{ cartItem.quantity }}</p>
               </div>
-              <div>
-                <h3>GHS {{ cartItem.price }}</h3>
+              <div class="flex flex-col items-end">
+                <h3>GHS {{ cartItem.price * cartItem.quantity }}</h3>
+
+                <svg class="cursor-pointer w-6 h-6 text-gray-500" aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg"
+                     @click="deleteCartItem(index)"
+                     width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                </svg>
+
               </div>
             </div>
           </div>
 
           <div class="static bottom-0 left-0">
             <hr class="my-2">
+            <div class="flex flex-row justify-between my-1">
+              <p>Subtotal</p>
+              <p>GHS {{ getCartTotal() }}</p>
+            </div>
+            <div class="flex flex-row justify-between my-1">
+              <p>Tax Total</p>
+              <p>GHS 0</p>
+            </div>
+            <div class="flex flex-row justify-between my-1">
+              <p>Discount</p>
+              <p>GHS 0</p>
+            </div>
+            <div class="flex flex-row justify-between my-1">
+              <p class="font-bold text-2xl">Total</p>
+              <p class="font-bold text-2xl">GHS {{ getCartTotal() }}</p>
+            </div>
+            <hr class="my-2">
             <div class="flex flex-row justify-center my-4 space-x-2">
-
               <div class="bg-red-50 p-5 w-1/2 text-center flex flex-col items-center rounded-lg">
                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                      width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -155,8 +180,7 @@
 import {IBusinessInfo} from "~/repository/models/ApiResponse";
 import Loader from "~/components/units/Loader.vue";
 import {IMenuDetail} from "~/repository/models/ApiResponse";
-import {Iitem} from "#build/repository/models/ApiResponse";
-// import menu from "#build/repository/modules/menu";
+import {Iitem} from "~/repository/models/ApiResponse";
 
 definePageMeta({
   layout: "pos",
@@ -224,8 +248,26 @@ const searchItems = (itemName: string) => {
 }
 
 const addToCart = (item: Iitem) => {
-  cartItems.value.push(item)
-  console.log(cartItems.value)
+  const pos = cartItems.value.findIndex(a => a.id === item.id)
+  if (pos < 0) {
+    item.quantity = 1
+    cartItems.value.push(item)
+  } else {
+    const theItem = cartItems.value[pos]
+    theItem.quantity++
+    cartItems.value.splice(pos, 1, theItem)
+  }
+}
+
+// const
+const getCartTotal = () => {
+  let sum: number = 0;
+  cartItems.value.forEach(a => sum += (a.price * a.quantity));
+  return sum
+}
+
+const deleteCartItem = (position: number) => {
+  cartItems.value.splice(position, 1)
 }
 
 const getDetailedMenu = (menuId: string, categoryId?: string) => {
