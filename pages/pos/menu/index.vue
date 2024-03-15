@@ -109,13 +109,37 @@
               <div class="flex flex-col items-end">
                 <h3>GHS {{ cartItem.price * cartItem.quantity }}</h3>
 
-                <svg class="cursor-pointer w-6 h-6 text-gray-500" aria-hidden="true"
-                     xmlns="http://www.w3.org/2000/svg"
-                     @click="deleteCartItem(index)"
-                     width="24" height="24" fill="none" viewBox="0 0 24 24">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-                </svg>
+                <!--                <svg class="cursor-pointer w-6 h-6 text-gray-500" aria-hidden="true"-->
+                <!--                     xmlns="http://www.w3.org/2000/svg"-->
+                <!--                     @click="deleteCartItem(index)"-->
+                <!--                     width="24" height="24" fill="none" viewBox="0 0 24 24">-->
+                <!--                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
+                <!--                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>-->
+                <!--                </svg>-->
+
+                <div class="flex-row flex space-x-2">
+                  <button type="button"
+                          @click="itemQuantityDecrease(index)"
+                          class="text-white bg-red-100 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg"
+                         width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 12h14"/>
+                    </svg>
+                  </button>
+
+                  <button type="button"
+                          @click="itemQuantityIncrease(index)"
+                          class="text-white bg-red-100 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg"
+                         width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 12h14m-7 7V5"/>
+                    </svg>
+                  </button>
+                </div>
 
               </div>
             </div>
@@ -162,12 +186,13 @@
               </div>
             </div>
 
-            <NuxtLink to="/pos/orders/payment">
-              <button type="button"
-                      class="focus:outline-none text-white bg-red-500 w-full hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                Place Order
-              </button>
-            </NuxtLink>
+            <!--            <NuxtLink to="/pos/orders/payment">-->
+            <button type="button"
+                    @click="createOrder()"
+                    class="focus:outline-none text-white bg-red-500 w-full hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+              Place Order
+            </button>
+            <!--            </NuxtLink>-->
           </div>
 
         </div>
@@ -181,6 +206,7 @@ import {IBusinessInfo} from "~/repository/models/ApiResponse";
 import Loader from "~/components/units/Loader.vue";
 import {IMenuDetail} from "~/repository/models/ApiResponse";
 import {Iitem} from "~/repository/models/ApiResponse";
+import {IOrders, OrderItem} from "~/repository/models/ApiResponse";
 
 definePageMeta({
   layout: "pos",
@@ -193,11 +219,14 @@ const isPending = ref(true)
 const selectedCategoryId = ref('')
 const selectedMenuId = ref('')
 const businessId = '72f16ef5-6b78-4504-80bd-16aef1c52b46'
+const branchId = '340328b2-cec0-4c5c-ba57-37a0f33dcf66'
 const menus = ref([])
 const items = ref([])
 const cartItems = ref([])
 const isMenuCategories = ref(true)
 const menuDetails = ref({} as IMenuDetail)
+const snackbar = useSnackbar();
+const router = useRouter()
 
 
 onMounted(() => {
@@ -248,14 +277,13 @@ const searchItems = (itemName: string) => {
 }
 
 const addToCart = (item: Iitem) => {
-  const pos = cartItems.value.findIndex(a => a.id === item.id)
+  const pos = returnItemPosition(item)
   if (pos < 0) {
+    //Separate this
     item.quantity = 1
     cartItems.value.push(item)
   } else {
-    const theItem = cartItems.value[pos]
-    theItem.quantity++
-    cartItems.value.splice(pos, 1, theItem)
+    itemQuantityIncrease(pos)
   }
 }
 
@@ -264,6 +292,31 @@ const getCartTotal = () => {
   let sum: number = 0;
   cartItems.value.forEach(a => sum += (a.price * a.quantity));
   return sum
+}
+
+function returnItemPosition(item: Iitem): number {
+  return cartItems.value.findIndex(a => a.id === item.id)
+}
+
+const itemQuantityIncrease = (itemPosition: number) => {
+  const theItem = (cartItems.value[itemPosition] as Iitem)
+  if (theItem.quantity !== undefined) {
+    theItem.quantity++
+    cartItems.value.splice(itemPosition, 1, theItem)
+  }
+
+}
+
+const itemQuantityDecrease = (itemPosition: number) => {
+  const theItem = (cartItems.value[itemPosition] as Iitem)
+  if (theItem.quantity !== undefined) {
+    theItem.quantity--
+    if (theItem.quantity <= 0) {
+      deleteCartItem(itemPosition)
+    } else {
+      cartItems.value.splice(itemPosition, 1, theItem)
+    }
+  }
 }
 
 const deleteCartItem = (position: number) => {
@@ -277,7 +330,6 @@ const getDetailedMenu = (menuId: string, categoryId?: string) => {
     isPending.value = false;
   }).catch(error => {
     isPending.value = false;
-
   })
 }
 
@@ -285,19 +337,45 @@ const getItemsByCategory = (categoryId: string) => {
   isMenuCategories.value = false
   isItemsPending.value = true
 
-  // selectedCategoryId.value = categoryId
-  // categoryItems.value.items = []
-
   $api.category.getItemsUnderCategories(categoryId).then(data => {
     isItemsPending.value = false
-
-    console.log(data.data)
     items.value = data.data.items
   }).catch(error => {
     isItemsPending.value = false
 
-    // iscCategoryItemsLoading.value = false;
   });
+}
+
+const transformOrderItems = (cartItem: []): OrderItem[] => {
+  const orderItems: OrderItem[] = []
+  cartItems.value.forEach(item => {
+    orderItems.push({
+      itemId: item.id,
+      quantity: item.quantity
+    })
+  })
+  return orderItems
+}
+
+const createOrder = () => {
+
+  const data: IOrders = {
+    kitchenNote: '',
+    orderItems: transformOrderItems(cartItems.value),
+    branchId: branchId,
+    businessId: businessId,
+    tableNumber: 1
+  }
+
+  $api.order.createOrder(data).then(data => {
+    console.log(data)
+    snackbar.add({
+      type: 'success',
+      text: 'Order created'
+    })
+    router.push(`/pos/orders/payment/${data.data.id}`)
+  }).catch(error => {
+  })
 }
 
 

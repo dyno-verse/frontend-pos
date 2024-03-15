@@ -1,5 +1,5 @@
 <template>
-  <div class="container h-screen h-lvh	">
+  <div class="h-screen h-lvh">
     <div class="bg-white border-b h-16 w-screen static absolute top-0 left-0">
       <div class="flex justify-between px-4 py-2 space-x-2">
         <div>
