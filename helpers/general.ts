@@ -1,5 +1,5 @@
 export enum PaymentType {
-    CASH,
-    MOBILE_MONEY,
-    CARD
+    CASH = 'CASH',
+    MOBILE_MONEY = 'MOBILE_MONEY',
+    CARD = 'CARD'
 }

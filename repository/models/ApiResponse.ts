@@ -163,6 +163,11 @@ export enum KitchenStatus {
     SERVED = 'SERVED'
 }
 
+export enum PaymentTypes {
+    PAID = 'PAID',
+    UNPAID = 'UNPAID',
+}
+
 export interface IOrder {
     businessId: string
     branchId: string

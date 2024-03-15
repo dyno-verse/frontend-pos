@@ -96,7 +96,13 @@
       <div class="relative right-0 col-span-3 h-full border-l overflow-y-auto">
         <div class="p-5">
           <div class="">
-            <h2 class="text-lg">Order Details</h2>
+            <div class="flex flex-row justify-between">
+              <h2 class="text-lg">Order Details</h2>
+              <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                   width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 12h.01m6 0h.01m5.99 0h.01"/>
+              </svg>
+            </div>
             <hr class="my-2">
           </div>
 
@@ -104,7 +110,7 @@
             <div class="flex flex-row justify-between items-center my-4" v-for="(cartItem, index) in cartItems">
               <div class="flex-col flex">
                 <h3>{{ cartItem.name }}</h3>
-                <p>Quantity: {{ cartItem.quantity }}</p>
+                <p class="text-gray-400">x{{ cartItem.quantity }}</p>
               </div>
               <div class="flex flex-col items-end">
                 <h3>GHS {{ cartItem.price * cartItem.quantity }}</h3>
@@ -121,7 +127,7 @@
                   <button type="button"
                           @click="itemQuantityDecrease(index)"
                           class="text-white bg-red-100 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                    <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg"
                          width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -132,7 +138,7 @@
                   <button type="button"
                           @click="itemQuantityIncrease(index)"
                           class="text-white bg-red-100 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                    <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg"
                          width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -368,7 +374,6 @@ const createOrder = () => {
   }
 
   $api.order.createOrder(data).then(data => {
-    console.log(data)
     snackbar.add({
       type: 'success',
       text: 'Order created'
