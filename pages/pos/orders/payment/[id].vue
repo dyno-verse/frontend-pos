@@ -13,10 +13,10 @@
           <div v-for="orderItem in order.orderItems" class="flex flex-row justify-between items-center py-2">
             <div>
               <p class="text-lg">{{ orderItem.item.name }}</p>
-              <p class="text-sm text-gray-400">Quantity: {{ orderItem.quantity }}</p>
+              <p class="text-sm text-gray-400">x {{ orderItem.quantity }}</p>
             </div>
             <p class="font-medium text-lg">
-               {{ orderItem.total }}
+              {{ orderItem.total }}
             </p>
           </div>
 
@@ -25,7 +25,7 @@
         <hr class="my-2">
         <div class="flex flex-row justify-between my-1">
           <p>Subtotal</p>
-          <p>GHS {{ '300' }}</p>
+          <p>GHS {{ order.total }}</p>
         </div>
         <div class="flex flex-row justify-between my-1">
           <p>Tax Total</p>
@@ -37,7 +37,7 @@
         </div>
         <div class="flex flex-row justify-between my-1">
           <p class="font-bold text-2xl">Total</p>
-          <p class="font-bold text-2xl">GHS {{ '400' }}</p>
+          <p class="font-bold text-2xl">GHS {{ order.total }}</p>
         </div>
       </div>
       <div class="col-span-2 h-screen bg-white p-5">
@@ -49,14 +49,21 @@
 
         <div @click="selectPaymentType(type.type)"
              :class="[ selectedPaymentType === type.type ? 'bg-red-100 font-bold': 'bg-gray-100' ]"
-             class="p-5 rounded-lg my-2 cursor-pointer" v-for="type in paymentMethods">
+             class="p-5 rounded-lg my-2 cursor-pointer flex flex-row space-x-2" v-for="type in paymentMethods">
+
+          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+               width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                  d="M8 7V6a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1h-1M3 18v-7a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-3.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
+          </svg>
+
           <p>{{ type.name }}</p>
         </div>
       </div>
 
       <div class="col-span-3 h-screen bg-white border-l p-5">
 
-        <div class="h-[430px]">
+        <div class="h-[380px]">
 
           <div class="">
             <div class="flex flex-row justify-between mb-2 items-center">
@@ -70,7 +77,8 @@
           </div>
 
 
-          <div class="grid grid-cols-3 gap-4">
+          <!--Show when the selected type is CASH-->
+          <div class="grid grid-cols-3 gap-4" v-if="selectedPaymentType === PaymentType.CASH">
             <div v-for="i in cashNotes" class="text-red-500 font-medium bg-red-50 py-4 rounded-lg text-center">
               <p> {{ i }}</p>
             </div>
@@ -84,6 +92,10 @@
 
         <!--Numberpad-->
         <div class="">
+          <input type="text"
+                 v-model="paymentReference"
+                 class="block w-full p-4 my-2 text-gray-900 border-transparent  bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+
           <div class="grid grid-cols-3 gap-4">
             <div v-for="num in numberPad" class="bg-gray-50 p-7 text-center rounded-lg">
               <p :class="[num.toLowerCase() === 'c' ? 'text-red-500 font-bold' : '']" class="text-2xl">{{ num }}</p>
@@ -91,6 +103,7 @@
           </div>
 
           <button type="button"
+                  @click="chargeOrder()"
                   class="my-4 focus:outline-none text-white bg-red-500 w-full hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-lg px-5 py-4 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
             Charge
           </button>
@@ -106,11 +119,14 @@
 <script lang="ts" setup>
 import {IOrders} from "~/repository/models/ApiResponse";
 
-const route = useRoute();
+const route = useRoute()
+const router = useRouter()
 const orderId = route.params.id
-const {$api} = useNuxtApp();
+const {$api} = useNuxtApp()
 const isPending = ref(true)
 const order = ref({} as IOrders)
+const snackbar = useSnackbar()
+const paymentReference = ref('')
 
 
 onMounted(() => {
@@ -125,6 +141,8 @@ onMounted(() => {
 
 import {PaymentType} from "~/helpers/general";
 import Loader from "~/components/units/Loader.vue";
+import {IPayment} from "~/repository/models/ApiResponse";
+import {PaymentTypes} from "~/repository/models/ApiResponse";
 
 const selectedPaymentType = ref(PaymentType.CASH)
 
@@ -152,6 +170,23 @@ const getOrder = (orderId: string) => {
   }).catch(error => {
     isPending.value = false
 
+  })
+}
+
+const chargeOrder = () => {
+  const data: IPayment = {
+    paymentReference: paymentReference.value,
+    paymentStatus: PaymentTypes.PAID,
+    paymentType: selectedPaymentType.value
+  }
+
+  $api.order.updatePaymentStatus(order.value.id, data).then(data => {
+    snackbar.add({
+      type: 'success',
+      text: 'Payment received or something'
+    })
+    router.push('/pos/menu')
+  }).catch(error => {
   })
 }
 

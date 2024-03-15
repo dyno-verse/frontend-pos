@@ -2,7 +2,39 @@
   <div class="pt-16">
     <div class="grid grid-cols-4">
       <div class="col-span-1 h-[845px] overflow-y-auto bg-gray-50 border-r border-gray-200">
+        <div>
+          <div class="flex-row flex justify-center space-x-4 p-4">
+            <p class="text-red-500 text-lg font-medium">Dine In</p>
+            <p class="text-lg font-medium">Pick Up/ delivery</p>
+          </div>
 
+          <div class="flex-row flex px-5 space-x-2">
+            <form class="flex-auto">
+              <label for="search" class="mb-2  text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                       xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                  </svg>
+                </div>
+                <input type="search" id="search"
+                       class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="Search" required/>
+              </div>
+            </form>
+            <button type="button"
+                    class="flex flex-row  justify-center space-x-2  text-white bg-red-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-4 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+              <svg class="w-6 h-6  text-red-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                   width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                      d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z"/>
+              </svg>
+              <p class="text-red-500">Filter</p>
+            </button>
+          </div>
+        </div>
         <div v-if="!isPending" class="h-36 rounded-lg text-gray-500 m-4 p-3 border border-gray-200 cursor-pointer"
              :class="[selectedOrderId === order.id  ? 'bg-red-50 border-red-100 text-gray-900' : 'bg-white']"
              @click="onOrderItemSelected(order.id)"
@@ -15,13 +47,16 @@
 
             <div class="flex-col flex text-right">
               <h2 class="text-lg">GHS {{ order.total }}</h2>
-              <div class="flex flex-row space-x-2 my-2">
+              <div class="flex flex-row space-x-2 my-2 justify-end">
                 <span
                     class="bg-gray-200 text-gray-500 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{
                     order.paymentStatus
                   }}</span>
                 <span
-                    class="text-white bg-gray-500 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">Cash</span>
+                    v-if="order.paymentType"
+                    class="text-white bg-gray-500 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">{{
+                    order.paymentType
+                  }}</span>
               </div>
             </div>
           </div>
@@ -41,12 +76,20 @@
                   <p class="text-lg text-gray-500">Order No: #00{{ order.orderNumber }}</p>
                 </div>
 
-                <NuxtLink :to="`/pos/orders/payment/${order.id}`">
+                <div class="flex flex-row justify-end space-x-2">
                   <button type="button"
+                          v-if="order.paymentStatus === PaymentTypes.PAID"
                           class="px-10 py-3.5 text-base font-medium text-white bg-red-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Charge
+                    Print
                   </button>
-                </NuxtLink>
+
+                  <NuxtLink :to="`/pos/orders/payment/${order.id}`" v-if="order.paymentStatus === PaymentTypes.UNPAID">
+                    <button type="button"
+                            class="px-10 py-3.5 text-base font-medium text-white bg-red-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                      Charge
+                    </button>
+                  </NuxtLink>
+                </div>
               </div>
 
               <hr class="py-5">
@@ -54,7 +97,9 @@
               <div class="flex flex-row justify-between py-2">
                 <p>Kitchen Status</p>
                 <span
-                    class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">{{ order.kitchenStatus}}</span>
+                    class="bg-green-200 text-green-700 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-gray-700 dark:text-gray-300">{{
+                    order.kitchenStatus
+                  }}</span>
               </div>
               <div class="flex flex-row justify-between py-2">
                 <p>Table Number</p>
@@ -62,7 +107,10 @@
               </div>
               <div class="flex flex-row justify-between py-2">
                 <p>Payment Status</p>
-                <p>{{ order.paymentStatus }}</p>
+                <span
+                    class="bg-red-100 text-red-500 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-gray-700 dark:text-gray-300">{{
+                    order.paymentStatus
+                  }}</span>
               </div>
               <div class="flex flex-row justify-between py-2">
                 <p>Payment Type</p>
@@ -124,6 +172,7 @@
 <script lang="ts" setup>
 import {IOrders} from "~/repository/models/ApiResponse";
 import Loader from "~/components/units/Loader.vue";
+import {PaymentTypes} from "~/repository/models/ApiResponse";
 
 definePageMeta({
   layout: "pos",
