@@ -71,7 +71,7 @@
                 <h3>Amount Recieved</h3>
                 <p class="text-gray-500 text-sm">Select the preferred payment method</p>
               </div>
-              <h3>GHS 20.00</h3>
+              <h3>GHS {{ noteSelected }}</h3>
             </div>
             <hr class="my-4">
           </div>
@@ -79,13 +79,15 @@
 
           <!--Show when the selected type is CASH-->
           <div class="grid grid-cols-3 gap-4" v-if="selectedPaymentType === PaymentType.CASH">
-            <div v-for="i in cashNotes" class="text-red-500 font-medium bg-red-50 py-4 rounded-lg text-center">
-              <p> {{ i }}</p>
+            <div v-for="note in cashNotes" class="font-medium bg-red-50 py-4 rounded-lg text-center cursor-pointer"
+                 :class="[noteSelected === note ? 'bg-red-500 text-white' : 'text-red-500']"
+                 @click="cashNoteSelected(note)">
+              <p> {{ note }}</p>
             </div>
 
             <div class="col-span-3 flex flex-row justify-between bg-gray-50 font-medium p-3">
               <p>Change</p>
-              <p>GHS 20.00</p>
+              <p>GHS {{ displayCashChange(noteSelected, order.total) }}</p>
             </div>
           </div>
         </div>
@@ -127,6 +129,7 @@ const isPending = ref(true)
 const order = ref({} as IOrders)
 const snackbar = useSnackbar()
 const paymentReference = ref('')
+const noteSelected = ref('0')
 
 
 onMounted(() => {
@@ -143,6 +146,8 @@ import {PaymentType} from "~/helpers/general";
 import Loader from "~/components/units/Loader.vue";
 import {IPayment} from "~/repository/models/ApiResponse";
 import {PaymentTypes} from "~/repository/models/ApiResponse";
+import {SymbolKind} from "vscode-languageserver-types";
+import Number = SymbolKind.Number;
 
 const selectedPaymentType = ref(PaymentType.CASH)
 
@@ -171,6 +176,17 @@ const getOrder = (orderId: string) => {
     isPending.value = false
 
   })
+}
+
+const displayCashChange = (noteReceived: string, totalAmount: number) => {
+  if (parseInt(noteReceived) < totalAmount) {
+    return 0
+  }
+  return (parseInt(noteReceived) - totalAmount)
+}
+
+const cashNoteSelected = (note: string) => {
+  noteSelected.value = note
 }
 
 const chargeOrder = () => {
