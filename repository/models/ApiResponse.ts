@@ -176,3 +176,9 @@ interface IOrderItems {
     quantity: number
 }
 
+export interface IPayment {
+    paymentType: string
+    paymentStatus: string
+    paymentReference: string
+}
+

@@ -206,7 +206,7 @@ import {IBusinessInfo} from "~/repository/models/ApiResponse";
 import Loader from "~/components/units/Loader.vue";
 import {IMenuDetail} from "~/repository/models/ApiResponse";
 import {Iitem} from "~/repository/models/ApiResponse";
-import {IOrders, OrderItem} from "#build/repository/models/ApiResponse";
+import {IOrders, OrderItem} from "~/repository/models/ApiResponse";
 
 definePageMeta({
   layout: "pos",
@@ -226,6 +226,7 @@ const cartItems = ref([])
 const isMenuCategories = ref(true)
 const menuDetails = ref({} as IMenuDetail)
 const snackbar = useSnackbar();
+const router = useRouter()
 
 
 onMounted(() => {
@@ -372,6 +373,7 @@ const createOrder = () => {
       type: 'success',
       text: 'Order created'
     })
+    router.push(`/pos/orders/payment/${data.data.id}`)
   }).catch(error => {
   })
 }

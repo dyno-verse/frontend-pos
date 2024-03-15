@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div class="grid grid-cols-8">
+    <div class="grid grid-cols-8" v-if="!isPending">
       <div class="col-span-3 h-screen bg-white border-r p-5">
 
         <div class="h-[780px]">
@@ -9,6 +9,17 @@
             <p class="text-gray-500 text-sm">Select the preferred payment method</p>
             <hr class="my-4">
           </div>
+
+          <div v-for="orderItem in order.orderItems" class="flex flex-row justify-between items-center py-2">
+            <div>
+              <p class="text-lg">{{ orderItem.item.name }}</p>
+              <p class="text-sm text-gray-400">Quantity: {{ orderItem.quantity }}</p>
+            </div>
+            <p class="font-medium text-lg">
+               {{ orderItem.total }}
+            </p>
+          </div>
+
         </div>
 
         <hr class="my-2">
@@ -46,11 +57,19 @@
       <div class="col-span-3 h-screen bg-white border-l p-5">
 
         <div class="h-[430px]">
-          <div></div>
-          <div class="flex flex-row justify-between mb-2">
-            <h3 class="mb-2">Amount Received</h3>
-            <h3>GHS 20.00</h3>
+
+          <div class="">
+            <div class="flex flex-row justify-between mb-2 items-center">
+              <div>
+                <h3>Amount Recieved</h3>
+                <p class="text-gray-500 text-sm">Select the preferred payment method</p>
+              </div>
+              <h3>GHS 20.00</h3>
+            </div>
+            <hr class="my-4">
           </div>
+
+
           <div class="grid grid-cols-3 gap-4">
             <div v-for="i in cashNotes" class="text-red-500 font-medium bg-red-50 py-4 rounded-lg text-center">
               <p> {{ i }}</p>
@@ -78,20 +97,34 @@
         </div>
       </div>
     </div>
+    <div v-else class="h-screen bg-white py-48">
+      <Loader/>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import {IOrders} from "~/repository/models/ApiResponse";
+
+const route = useRoute();
+const orderId = route.params.id
+const {$api} = useNuxtApp();
+const isPending = ref(true)
+const order = ref({} as IOrders)
+
 
 onMounted(() => {
-  if (navigator.onLine) {
-    console.log("online")
-  } else {
-    console.log("offline")
-  }
+  // if (navigator.onLine) {
+  //   console.log("online")
+  // } else {
+  //   console.log("offline")
+  // }
+
+  getOrder(orderId.toString())
 })
 
 import {PaymentType} from "~/helpers/general";
+import Loader from "~/components/units/Loader.vue";
 
 const selectedPaymentType = ref(PaymentType.CASH)
 
@@ -108,6 +141,18 @@ const paymentMethods = [
 
 const selectPaymentType = (type: PaymentType) => {
   selectedPaymentType.value = type
+}
+
+const getOrder = (orderId: string) => {
+  isPending.value = true
+  $api.order.getOrder(orderId).then(data => {
+    order.value = data.data
+    isPending.value = false
+
+  }).catch(error => {
+    isPending.value = false
+
+  })
 }
 
 </script>
