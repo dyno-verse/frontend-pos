@@ -186,12 +186,13 @@
               </div>
             </div>
 
-            <NuxtLink to="/pos/orders/payment">
-              <button type="button"
-                      class="focus:outline-none text-white bg-red-500 w-full hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
-                Place Order
-              </button>
-            </NuxtLink>
+            <!--            <NuxtLink to="/pos/orders/payment">-->
+            <button type="button"
+                    @click="createOrder()"
+                    class="focus:outline-none text-white bg-red-500 w-full hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+              Place Order
+            </button>
+            <!--            </NuxtLink>-->
           </div>
 
         </div>
@@ -205,6 +206,7 @@ import {IBusinessInfo} from "~/repository/models/ApiResponse";
 import Loader from "~/components/units/Loader.vue";
 import {IMenuDetail} from "~/repository/models/ApiResponse";
 import {Iitem} from "~/repository/models/ApiResponse";
+import {IOrders, OrderItem} from "#build/repository/models/ApiResponse";
 
 definePageMeta({
   layout: "pos",
@@ -217,11 +219,13 @@ const isPending = ref(true)
 const selectedCategoryId = ref('')
 const selectedMenuId = ref('')
 const businessId = '72f16ef5-6b78-4504-80bd-16aef1c52b46'
+const branchId = '340328b2-cec0-4c5c-ba57-37a0f33dcf66'
 const menus = ref([])
 const items = ref([])
 const cartItems = ref([])
 const isMenuCategories = ref(true)
 const menuDetails = ref({} as IMenuDetail)
+const snackbar = useSnackbar();
 
 
 onMounted(() => {
@@ -325,7 +329,6 @@ const getDetailedMenu = (menuId: string, categoryId?: string) => {
     isPending.value = false;
   }).catch(error => {
     isPending.value = false;
-
   })
 }
 
@@ -335,14 +338,42 @@ const getItemsByCategory = (categoryId: string) => {
 
   $api.category.getItemsUnderCategories(categoryId).then(data => {
     isItemsPending.value = false
-
-    console.log(data.data)
     items.value = data.data.items
   }).catch(error => {
     isItemsPending.value = false
 
-    // iscCategoryItemsLoading.value = false;
   });
+}
+
+const transformOrderItems = (cartItem: []): OrderItem[] => {
+  const orderItems: OrderItem[] = []
+  cartItems.value.forEach(item => {
+    orderItems.push({
+      itemId: item.id,
+      quantity: item.quantity
+    })
+  })
+  return orderItems
+}
+
+const createOrder = () => {
+
+  const data: IOrders = {
+    kitchenNote: '',
+    orderItems: transformOrderItems(cartItems.value),
+    branchId: branchId,
+    businessId: businessId,
+    tableNumber: 1
+  }
+
+  $api.order.createOrder(data).then(data => {
+    console.log(data)
+    snackbar.add({
+      type: 'success',
+      text: 'Order created'
+    })
+  }).catch(error => {
+  })
 }
 
 
