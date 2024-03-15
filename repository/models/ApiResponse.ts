@@ -163,3 +163,16 @@ export enum KitchenStatus {
     SERVED = 'SERVED'
 }
 
+export interface IOrder {
+    businessId: string
+    branchId: string
+    kitchenNote: string
+    tableNumber: number
+    orderItems: IOrderItems[]
+}
+
+interface IOrderItems {
+    itemId: string
+    quantity: number
+}
+

@@ -19,9 +19,6 @@ class CategoryModule extends HttpFactory {
         return await this.call<ICategoryItems>('GET', `${this.RESOURCE}/${categoryId}/detailed`)
     }
 
-    async addItem(categoryId: string, request: ICreateCategoryItem) {
-        return await this.call<ICreateCategoryItem>('POST', `${this.RESOURCE}/${categoryId}/menu-item`, request)
-    }
 }
 
 export default CategoryModule;
