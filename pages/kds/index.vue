@@ -8,6 +8,7 @@
            @dblclick="updateOrderStatus(order.id, index)">
         <h3 class="text-5xl font-extrabold">00{{ order.orderNumber }}</h3>
         <p class="">Table #{{ order.tableNumber }}</p>
+        <small>{{order.createdAt}}</small>
 
         <div v-for="o in order.orderItems" class="bg-red-50 border-dashed border border-red-400 rounded-lg my-2">
           <p class="text-2xs my-3 mx-3">{{ o.item.name }} (x{{ o.quantity}})</p>
