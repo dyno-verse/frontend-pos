@@ -107,10 +107,13 @@
           <div class="">
             <div class="flex flex-row justify-between">
               <h2 class="text-lg">Order Details</h2>
-              <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                   width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 12h.01m6 0h.01m5.99 0h.01"/>
-              </svg>
+
+              <button ref="cartDropdownMenu">
+                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                     width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 12h.01m6 0h.01m5.99 0h.01"/>
+                </svg>
+              </button>
             </div>
             <hr class="my-2">
           </div>
@@ -123,14 +126,6 @@
               </div>
               <div class="flex flex-col items-end">
                 <h3>{{ format('', cartItem.price * cartItem.quantity) }}</h3>
-
-                <!--                <svg class="cursor-pointer w-6 h-6 text-gray-500" aria-hidden="true"-->
-                <!--                     xmlns="http://www.w3.org/2000/svg"-->
-                <!--                     @click="deleteCartItem(index)"-->
-                <!--                     width="24" height="24" fill="none" viewBox="0 0 24 24">-->
-                <!--                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
-                <!--                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>-->
-                <!--                </svg>-->
 
                 <div class="flex-row flex space-x-4">
                   <button type="button"
@@ -209,18 +204,39 @@
               </div>
             </div>
 
-            <!--            <NuxtLink to="/pos/orders/payment">-->
             <button type="button"
                     @click="createOrder()"
-                    class="focus:outline-none text-white bg-red-500 w-full hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-lg px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                    class="text-white bg-red-500 w-full font-medium rounded-lg text-lg px-5 py-2.5 me-2 mb-2">
               Place Order
             </button>
-            <!--            </NuxtLink>-->
+
+
           </div>
 
         </div>
       </div>
     </div>
+
+
+    <!-- Dropdown menu -->
+    <div id="dropdownDotsHorizontal"
+         ref="cartDropdownId"
+         class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+      <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
+        <li>
+          <a href="#"
+             class="block px-4 py-2 text-sm">Kitchen Note</a>
+        </li>
+      </ul>
+      <div class="py-2">
+        <a @click="deleteAllCartItems()"
+           class="block px-4 py-2 text-sm text-red-700 cursor-pointer">
+          Clear cart
+        </a>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -238,6 +254,9 @@ const {$api} = useNuxtApp();
 const businessInfo = ref({} as IBusinessInfo)
 const isMenusPending = ref(true)
 const isItemsPending = ref(true)
+const cartDropdown = ref({})
+const cartDropdownMenu = ref(null)
+const cartDropdownId = ref(null)
 const isPending = ref(true)
 const selectedCategoryId = ref('')
 const selectedMenuId = ref('')
@@ -246,17 +265,38 @@ const branchId = '340328b2-cec0-4c5c-ba57-37a0f33dcf66'
 const menus = ref([])
 const items = ref([])
 const cartItems = ref([])
-const isMenuCategories = ref(true)
 const menuDetails = ref({} as IMenuDetail)
 const snackbar = useSnackbar();
 const router = useRouter()
 const search = ref('')
 import {format} from 'money-formatter';
 import debounce from 'lodash.debounce'
+import {Dropdown, DropdownOptions} from "flowbite";
 
 
 onMounted(() => {
   getBusinessById(businessId)
+
+  // options with default values
+  const options: DropdownOptions = {
+    placement: 'bottom',
+    triggerType: 'click',
+    offsetSkidding: 0,
+    offsetDistance: 10,
+    delay: 300,
+    onHide: () => {
+      console.log('dropdown has been hidden');
+    },
+    onShow: () => {
+      console.log('dropdown has been shown');
+    },
+    onToggle: () => {
+      console.log('dropdown has been toggled');
+    },
+  };
+
+  cartDropdown.value = new Dropdown(cartDropdownId.value, cartDropdownMenu.value, options);
+
 })
 
 const enum ViewTypes {
@@ -364,6 +404,12 @@ const itemQuantityDecrease = (itemPosition: number) => {
 
 const deleteCartItem = (position: number) => {
   cartItems.value.splice(position, 1)
+}
+
+const deleteAllCartItems = () => {
+  cartItems.value.length = 0
+
+  cartDropdown.value.hide()
 }
 
 const getDetailedMenu = (menuId: string, categoryId?: string) => {

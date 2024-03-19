@@ -49,13 +49,15 @@
               <h2 class="text-lg">{{ format('GHC', order.total) }}</h2>
               <div class="flex flex-row space-x-2 my-2 justify-end">
                 <span
-                    class="bg-gray-200 text-gray-500 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{
-                    order.paymentStatus
+                    :class="[ order.paymentStatus === PaymentTypes.PAID ? 'bg-green-400 text-green-200' : 'bg-red-500 text-red-100']"
+                    class="text-gray-500 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{
+                    paymentStatus(order.paymentStatus)
                   }}</span>
                 <span
                     v-if="order.paymentType"
-                    class="text-white bg-gray-500 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">{{
-                    order.paymentType
+                    :class="[ paymentTypeColors(order.paymentType)]"
+                    class="text-white text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">{{
+                    paymentType(order.paymentType)
                   }}</span>
               </div>
             </div>
@@ -72,8 +74,9 @@
             <div>
               <div class="flex flex-row justify-between py-5 items-center">
                 <div>
-                  <h4 class="text-5xl">{{ format('GHC',order.total) }}</h4>
+                  <h4 class="text-5xl">{{ format('GHC', order.total) }}</h4>
                   <p class="text-lg text-gray-500">Order No: #00{{ order.orderNumber }}</p>
+
                 </div>
 
                 <div class="flex flex-row justify-end space-x-2">
@@ -222,6 +225,40 @@ const getOrder = (orderId: string) => {
     isLoadingOrder.value = false
 
   })
+}
+
+
+const paymentStatus = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'unpaid':
+      return "Unpaid"
+    case 'paid':
+      return "Paid"
+  }
+}
+
+const paymentType = (option: string) => {
+  switch (option.toLowerCase()) {
+    case 'cash':
+      return "Cash"
+    case 'mobile_money':
+      return "Mobile Money"
+    case 'card':
+      return 'Bank card'
+  }
+}
+
+const paymentTypeColors = (option: string) => {
+  switch (option.toLowerCase()) {
+    case 'cash':
+      return 'bg-blue-400'
+    case 'mobile_money':
+      return 'bg-fuchsia-400'
+    case 'card':
+      return 'bg-orange-400'
+    default:
+      return 'bg-lime-400'
+  }
 }
 
 

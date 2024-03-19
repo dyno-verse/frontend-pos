@@ -15,10 +15,9 @@ export default defineNuxtConfig({
     },
     devtools: {enabled: true},
     modules: [
-        // '@sidebase/nuxt-auth',
         '@nuxtjs/tailwindcss',
         'nuxt-snackbar',
-        // '@pinia/nuxt'
+        // '@nuxtjs/dayjs'
     ],
     snackbar: {
         bottom: true,

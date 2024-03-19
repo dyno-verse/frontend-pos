@@ -11,6 +11,10 @@ export default {
     ],
     theme: {
         colors: {
+            lime: {
+                400: '#a3e635',
+                500: '#84cc16'
+            },
             red: {
                 50: '#FFF2F6',
                 100: '#FFCCDB',
@@ -57,6 +61,13 @@ export default {
         },
         extend: {
             colors: {
+                fuchsia:{
+                    400: '#e879f9'
+                },
+                lime: {
+                    400: '#a3e635',
+                    500: '#84cc16'
+                },
                 red: {
                     50: '#FFF2F6',
                     100: '#FFCCDB',
@@ -82,7 +93,9 @@ export default {
                     50: '#FFFCF2',
                     500: '#F6CD53'
                 },
-                orange: '#FF8A00',
+                orange:{
+                    400:'#fb923c'
+                },
                 purple: {
                     100: '#E9CCFF',
                     600: '#6400B2',
