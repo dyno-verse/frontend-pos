@@ -46,7 +46,7 @@
             </div>
 
             <div class="flex-col flex text-right">
-              <h2 class="text-lg">GHS {{ order.total }}</h2>
+              <h2 class="text-lg">{{ format('GHC', order.total) }}</h2>
               <div class="flex flex-row space-x-2 my-2 justify-end">
                 <span
                     class="bg-gray-200 text-gray-500 text-xs font-medium  px-2.5 py-1.5 rounded-full dark:bg-blue-900 dark:text-blue-300">{{
@@ -72,20 +72,20 @@
             <div>
               <div class="flex flex-row justify-between py-5 items-center">
                 <div>
-                  <h4 class="text-5xl">GHS {{ order.total }}</h4>
+                  <h4 class="text-5xl">{{ format('GHC',order.total) }}</h4>
                   <p class="text-lg text-gray-500">Order No: #00{{ order.orderNumber }}</p>
                 </div>
 
                 <div class="flex flex-row justify-end space-x-2">
                   <button type="button"
                           v-if="order.paymentStatus === PaymentTypes.PAID"
-                          class="px-10 py-3.5 text-base font-medium text-white bg-red-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                          class="px-10 py-3.5 text-base font-medium text-white bg-red-500 rounded-lg text-center dark:bg-blue-600">
                     Print
                   </button>
 
                   <NuxtLink :to="`/pos/orders/payment/${order.id}`" v-if="order.paymentStatus === PaymentTypes.UNPAID">
                     <button type="button"
-                            class="px-10 py-3.5 text-base font-medium text-white bg-red-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            class="px-10 py-3.5 text-base font-medium text-white bg-red-500 rounded-lg text-center">
                       Charge
                     </button>
                   </NuxtLink>
@@ -145,7 +145,7 @@
                     {{ orderItem.quantity }}
                   </td>
                   <td class="px-6 py-4">
-                    GHS {{ orderItem.total }}
+                    {{ format('', orderItem.total) }}
                   </td>
                 </tr>
                 </tbody>
@@ -185,6 +185,7 @@ const orders = ref({} as IOrders)
 const order = ref({} as IOrders)
 const branchId = '340328b2-cec0-4c5c-ba57-37a0f33dcf66'
 const selectedOrderId = ref('')
+import {format} from 'money-formatter'
 
 onMounted(() => {
   getAllOrders()

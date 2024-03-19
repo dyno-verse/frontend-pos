@@ -16,7 +16,7 @@
               <p class="text-sm text-gray-400">x {{ orderItem.quantity }}</p>
             </div>
             <p class="font-medium text-lg">
-              {{ orderItem.total }}
+              {{ format('', orderItem.total) }}
             </p>
           </div>
 
@@ -25,7 +25,7 @@
         <hr class="my-2">
         <div class="flex flex-row justify-between my-1">
           <p>Subtotal</p>
-          <p>GHS {{ order.total }}</p>
+          <p>{{ format('GHC', order.total) }}</p>
         </div>
         <div class="flex flex-row justify-between my-1">
           <p>Tax Total</p>
@@ -37,7 +37,7 @@
         </div>
         <div class="flex flex-row justify-between my-1">
           <p class="font-bold text-2xl">Total</p>
-          <p class="font-bold text-2xl">GHS {{ order.total }}</p>
+          <p class="font-bold text-2xl">{{ format('GHC', order.total) }}</p>
         </div>
       </div>
       <div class="col-span-2 h-screen bg-white p-5">
@@ -144,6 +144,7 @@ const order = ref({} as IOrders)
 const snackbar = useSnackbar()
 const paymentReference = ref('')
 const noteSelected = ref('0')
+import {format} from 'money-formatter';
 
 
 onMounted(() => {
