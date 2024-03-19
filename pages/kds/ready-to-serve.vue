@@ -1,25 +1,21 @@
 <template>
   <div class="mx-auto">
     <div v-if="!isPending"
-         class="grid grid-cols-6 gap-4 auto-rows-fr items-center justify-items-stretch content-start m-4">
+         class="grid grid-cols-5 gap-4 auto-rows-fr items-center justify-items-stretch content-start m-4">
 
-      <div v-if="orders.length !== 0" v-for="(order, index) in orders" class="bg-green-50 w-full h-full rounded-lg border border-green-500 p-5"
+      <div v-if="orders.length !== 0" v-for="(order, index) in orders"
+           class="bg-green-50 w-full h-full rounded-lg border border-green-500 p-5"
            @dblclick="updateOrderStatus(order.id, index)">
         <h3 class="text-5xl font-extrabold">00{{ order.orderNumber }}</h3>
         <p class="">Table #{{ order.tableNumber }}</p>
-        <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
 
-        <div v-for="o in order.orderItems">
-          <p class="text-xl my-2">{{ o.item.name }} (x{{ o.quantity}})</p>
-          <p class="my-4 text-gray-500">
-
-          </p>
+        <div v-for="o in order.orderItems" class="bg-green-50 border-dashed border border-green-400 rounded-lg my-2">
+          <p class="text-2xs my-3 mx-3">{{ o.item.name }} (x{{ o.quantity }})</p>
         </div>
 
-        <hr class="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700">
-
         <div class="flex flex-col space-y-1">
-          <svg class="w-6 h-6 text-gray-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+          <svg v-if="order.kitchenNote.length !== 0" class="w-6 h-6 text-gray-500 dark:text-white" aria-hidden="true"
+               xmlns="http://www.w3.org/2000/svg"
                fill="none" viewBox="0 0 24 24">
             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M7.6 8.5h8m-8 3.5H12m7.1-7H5c-.2 0-.5 0-.6.3-.2.1-.3.3-.3.6V15c0 .3 0 .5.3.6.1.2.4.3.6.3h4l3 4 3-4h4.1c.2 0 .5 0 .6-.3.2-.1.3-.3.3-.6V6c0-.3 0-.5-.3-.6a.9.9 0 0 0-.6-.3Z"/>
