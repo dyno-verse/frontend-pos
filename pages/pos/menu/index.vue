@@ -44,6 +44,7 @@
             <!---category-->
             <div v-if="menuDetails.categories.length !== 0"
                  class="bg-gray-100 cursor-pointer rounded-lg p-5 text-center items-center justify-center flex flex-col"
+                 :style="{backgroundColor:category.color}"
                  v-for="category in menuDetails.categories" @click="getItemsByCategory(category.id)">
 
               <svg class="w-6 h-6 text-gray-800 dark:text-white self-end" aria-hidden="true"
@@ -63,20 +64,37 @@
             <!---Item-->
             <div v-if="items.length !== 0"
                  @click="addToCart(item)"
-                 class="bg-white border-gray-100 border cursor-pointer rounded-lg p-5 text-center items-center justify-center flex flex-col"
+                 class="bg-white border-gray-100 border cursor-pointer rounded-lg text-center pb-5 items-center justify-center flex-col"
                  v-for="item in items">
 
-              <img v-if="item.imageUrl !== null" :src="item.imageUrl" class="w-32 h-32"/>
+              <!--              <img v-if="item.imageUrl !== null" :src="item.imageUrl" class="w-32 h-32"/>-->
+
+              <div v-if="item.imageUrl !== null" class="rounded-t-lg bg-gray-100 w-full mb-2 p-2"
+                   :style="{ backgroundColor:item.color}">
+                <object :data="item.imageUrl"
+                        :style="{objectFit: 'contain', height: '7rem' ,width: '100%'}"
+                        class="object-cover z-10 text-center justify-center">
+                </object>
+              </div>
               <div v-else
-                   class="relative  inline-flex items-center justify-center w-24 h-24 overflow-hidden bg-gray-900 rounded-full dark:bg-gray-600">
+                   :style="{height: '8rem' ,width: '100%', backgroundColor:item.color}"
+                   class="relative px-5 inline-flex items-center bg-gray-50 justify-center rounded-t-lg mb-2 overflow-hidden">
                   <span
-                      class="font-medium text-gray-100 text-3xl dark:text-gray-300">{{
+                      class="font-bold text-gray-800 text-3xl">{{
                       getFirstTwoCharacters(item.name)
                     }}</span>
               </div>
 
-              <p class="text-center text-black text-lg">{{ item.name }}</p>
-              <h5 class="text-center text-black text-sm  font-extrabold">GHS {{ item.price }}</h5>
+              <!--              <div v-else-->
+              <!--                   class="relative  inline-flex items-center justify-center w-24 h-24 overflow-hidden bg-gray-900 rounded-full dark:bg-gray-600">-->
+              <!--                  <span-->
+              <!--                      class="font-medium text-gray-100 text-3xl dark:text-gray-300">{{-->
+              <!--                      getFirstTwoCharacters(item.name)-->
+              <!--                    }}</span>-->
+              <!--              </div>-->
+
+              <p class="text-center text-black text-2xs">{{ item.name }}</p>
+              <h5 class="text-center text-black text-sm  font-bold">{{ format('GHC', item.price) }}</h5>
             </div>
             <div v-else class="w-full col-span-3">
               <EmptyState/>
@@ -113,7 +131,7 @@
                 <p class="text-gray-400">x{{ cartItem.quantity }}</p>
               </div>
               <div class="flex flex-col items-end">
-                <h3>GHS {{ cartItem.price * cartItem.quantity }}</h3>
+                <h3>{{ format('', cartItem.price * cartItem.quantity) }}</h3>
 
                 <!--                <svg class="cursor-pointer w-6 h-6 text-gray-500" aria-hidden="true"-->
                 <!--                     xmlns="http://www.w3.org/2000/svg"-->
@@ -123,21 +141,29 @@
                 <!--                        d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>-->
                 <!--                </svg>-->
 
-                <div class="flex-row flex space-x-2">
+                <div class="flex-row flex space-x-4">
                   <button type="button"
                           @click="itemQuantityDecrease(index)"
-                          class="text-white bg-red-50 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true"
+                          class="text-white bg-red-50 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center">
+
+                    <svg v-if="cartItem.quantity > 1" class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg"
                          width="24" height="24" fill="none" viewBox="0 0 24 24">
                       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M5 12h14"/>
                     </svg>
+
+                    <svg v-else class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true"
+                         xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                    </svg>
+
                   </button>
 
                   <button type="button"
                           @click="itemQuantityIncrease(index)"
-                          class="text-white bg-red-50 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                          class="text-white bg-red-50 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center">
                     <svg class="w-5 h-5 text-gray-800 dark:text-white" aria-hidden="true"
                          xmlns="http://www.w3.org/2000/svg"
                          width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -155,7 +181,7 @@
             <hr class="my-2">
             <div class="flex flex-row justify-between my-1">
               <p>Subtotal</p>
-              <p>GHS {{ getCartTotal() }}</p>
+              <p>{{ format('GHC', getCartTotal()) }}</p>
             </div>
             <div class="flex flex-row justify-between my-1">
               <p>Tax Total</p>
@@ -167,7 +193,7 @@
             </div>
             <div class="flex flex-row justify-between my-1">
               <p class="font-bold text-2xl">Total</p>
-              <p class="font-bold text-2xl">GHS {{ getCartTotal() }}</p>
+              <p class="font-bold text-2xl">{{ format('GHC', getCartTotal()) }}</p>
             </div>
             <hr class="my-2">
             <div class="flex flex-row justify-center my-4 space-x-2">
@@ -233,6 +259,7 @@ const isMenuCategories = ref(true)
 const menuDetails = ref({} as IMenuDetail)
 const snackbar = useSnackbar();
 const router = useRouter()
+import {format} from 'money-formatter';
 
 
 onMounted(() => {

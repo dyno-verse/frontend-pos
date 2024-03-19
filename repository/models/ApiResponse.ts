@@ -67,6 +67,7 @@ interface Category {
     parentId?: any;
     createdAt: string;
     updatedAt: string;
+    color?: string;
     items: Item2[];
     children: any[];
 }
