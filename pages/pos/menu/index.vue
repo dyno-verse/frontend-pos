@@ -20,8 +20,8 @@
       <div class="col-span-5 h-full bg-white overflow-y-auto">
         <div class="mb-4 mt-2">
 
-          <form>
-            <label for="search" class="mb-2  text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+          <div>
+            <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
             <div class="relative">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
@@ -31,16 +31,17 @@
                 </svg>
               </div>
               <input type="search" id="search"
-                     class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                     placeholder="Search" required/>
+                     v-model="search"
+                     class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50"
+                     placeholder="Search"/>
             </div>
-          </form>
+          </div>
 
         </div>
         <div>
 
 
-          <div v-if="!isPending && isMenuCategories" class="grid grid-cols-3 gap-4">
+          <div v-if="!isPending && ViewTypes.CATEGORIES === selectedViewType" class="grid grid-cols-3 gap-4">
             <!---category-->
             <div v-if="menuDetails.categories.length !== 0"
                  class="bg-gray-100 cursor-pointer rounded-lg p-5 text-center items-center justify-center flex flex-col"
@@ -60,14 +61,12 @@
               <EmptyState/>
             </div>
           </div>
-          <div v-else-if="!isItemsPending && !isMenuCategories" class="grid grid-cols-3 gap-4">
+          <div v-else-if="!isItemsPending && ViewTypes.ITEMS === selectedViewType" class="grid grid-cols-3 gap-4">
             <!---Item-->
             <div v-if="items.length !== 0"
                  @click="addToCart(item)"
                  class="bg-white border-gray-100 border cursor-pointer rounded-lg text-center pb-5 items-center justify-center flex-col"
                  v-for="item in items">
-
-              <!--              <img v-if="item.imageUrl !== null" :src="item.imageUrl" class="w-32 h-32"/>-->
 
               <div v-if="item.imageUrl !== null" class="rounded-t-lg bg-gray-100 w-full mb-2 p-2"
                    :style="{ backgroundColor:item.color}">
@@ -85,15 +84,7 @@
                     }}</span>
               </div>
 
-              <!--              <div v-else-->
-              <!--                   class="relative  inline-flex items-center justify-center w-24 h-24 overflow-hidden bg-gray-900 rounded-full dark:bg-gray-600">-->
-              <!--                  <span-->
-              <!--                      class="font-medium text-gray-100 text-3xl dark:text-gray-300">{{-->
-              <!--                      getFirstTwoCharacters(item.name)-->
-              <!--                    }}</span>-->
-              <!--              </div>-->
-
-              <p class="text-center text-black text-2xs">{{ item.name }}</p>
+              <p class="text-center text-black text-2xs line-clamp-2">{{ item.name }}</p>
               <h5 class="text-center text-black text-sm  font-bold">{{ format('GHC', item.price) }}</h5>
             </div>
             <div v-else class="w-full col-span-3">
@@ -259,12 +250,22 @@ const isMenuCategories = ref(true)
 const menuDetails = ref({} as IMenuDetail)
 const snackbar = useSnackbar();
 const router = useRouter()
+const search = ref('')
 import {format} from 'money-formatter';
+import debounce from 'lodash.debounce'
 
 
 onMounted(() => {
   getBusinessById(businessId)
 })
+
+const enum ViewTypes {
+  ITEMS,
+  CATEGORIES
+}
+
+const selectedViewType = ref(ViewTypes.CATEGORIES)
+
 
 function getFirstTwoCharacters(sentence: string): string {
   const words = sentence.split(' ');
@@ -296,16 +297,25 @@ const getBusinessById = (id: string) => {
 }
 
 const selectMenu = (menuId: string) => {
-  isMenuCategories.value = true
+  selectedViewType.value = ViewTypes.CATEGORIES
   selectedMenuId.value = menuId
   getDetailedMenu(menuId)
 }
 
-const searchItems = (itemName: string) => {
-  $api.item.searchItems('').then(data => {
-    console.log(data.data)
-  }).catch(error => {
+watch(search, debounce(() => {
+  searchItems(search.value)
+}, 500))
 
+
+const searchItems = (itemName: string) => {
+  isItemsPending.value = true
+  selectedViewType.value = ViewTypes.ITEMS
+  $api.item.searchItems(branchId, itemName).then(data => {
+    items.value = data.data
+    isItemsPending.value = false
+  }).catch(error => {
+    isItemsPending.value = false
+    // isMenuCategories.value = false
   })
 }
 
@@ -367,8 +377,8 @@ const getDetailedMenu = (menuId: string, categoryId?: string) => {
 }
 
 const getItemsByCategory = (categoryId: string) => {
-  isMenuCategories.value = false
   isItemsPending.value = true
+  selectedViewType.value = ViewTypes.ITEMS
 
   $api.category.getItemsUnderCategories(categoryId).then(data => {
     isItemsPending.value = false
