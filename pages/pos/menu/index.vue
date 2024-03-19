@@ -224,7 +224,7 @@
          class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
       <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconHorizontalButton">
         <li>
-          <a href="#"
+          <a @click="openKitchenNoteModal()"
              class="block px-4 py-2 text-sm">Kitchen Note</a>
         </li>
       </ul>
@@ -236,6 +236,54 @@
       </div>
     </div>
 
+
+    <!---Kitchen Note Modal-->
+    <div ref="kitchenNoteModalId" tabindex="-1" aria-hidden="true"
+         class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+      <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+          <!-- Modal header -->
+          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+              Kitchen Note
+            </h3>
+            <button type="button"
+                    @click="kitchenNoteModal.hide()"
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-toggle="crud-modal">
+              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                   viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+              </svg>
+              <span class="sr-only">Close modal</span>
+            </button>
+          </div>
+          <!-- Modal body -->
+          <form class="p-4 md:p-5">
+            <div class="grid gap-4 mb-4 grid-cols-2">
+              <div class="col-span-2">
+                <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Table
+                  Number</label>
+                <input type="number" v-model="createOrderModel.tableNumber" id="name"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                       placeholder="Type product name" required="">
+              </div>
+
+              <div class="col-span-2">
+                <label for="description"
+                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Note</label>
+                <textarea id="description" rows="4"
+                          v-model="createOrderModel.kitchenNote"
+                          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          placeholder="Write a note to the kitchen"></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -258,6 +306,8 @@ const cartDropdown = ref({})
 const cartDropdownMenu = ref(null)
 const cartDropdownId = ref(null)
 const isPending = ref(true)
+const kitchenNoteModal = ref({})
+const kitchenNoteModalId = ref(null)
 const selectedCategoryId = ref('')
 const selectedMenuId = ref('')
 const businessId = '72f16ef5-6b78-4504-80bd-16aef1c52b46'
@@ -269,9 +319,16 @@ const menuDetails = ref({} as IMenuDetail)
 const snackbar = useSnackbar();
 const router = useRouter()
 const search = ref('')
+const createOrderModel = ref({
+  kitchenNote: '',
+  orderItems: [],
+  branchId: branchId,
+  businessId: businessId,
+  tableNumber: 1
+})
 import {format} from 'money-formatter';
 import debounce from 'lodash.debounce'
-import {Dropdown, DropdownOptions} from "flowbite";
+import {Dropdown, DropdownOptions, Modal} from "flowbite";
 
 
 onMounted(() => {
@@ -296,8 +353,13 @@ onMounted(() => {
   };
 
   cartDropdown.value = new Dropdown(cartDropdownId.value, cartDropdownMenu.value, options);
+  kitchenNoteModal.value = new Modal(kitchenNoteModalId.value)
 
 })
+
+const openKitchenNoteModal = () => {
+  kitchenNoteModal.value.show()
+}
 
 const enum ViewTypes {
   ITEMS,
@@ -447,16 +509,17 @@ const transformOrderItems = (cartItem: []): OrderItem[] => {
 }
 
 const createOrder = () => {
+  // const data: IOrders = {
+  //   kitchenNote: '',
+  //   orderItems: ,
+  //   branchId: branchId,
+  //   businessId: businessId,
+  //   tableNumber: 1
+  // }
 
-  const data: IOrders = {
-    kitchenNote: '',
-    orderItems: transformOrderItems(cartItems.value),
-    branchId: branchId,
-    businessId: businessId,
-    tableNumber: 1
-  }
+  createOrderModel.value.orderItems = transformOrderItems(cartItems.value)
 
-  $api.order.createOrder(data).then(data => {
+  $api.order.createOrder(createOrderModel.value).then(data => {
     snackbar.add({
       type: 'success',
       text: 'Order created'
