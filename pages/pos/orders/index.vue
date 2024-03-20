@@ -113,13 +113,13 @@
                 <p>Payment Status</p>
                 <span
                     :class="[ order.paymentStatus === PaymentTypes.PAID ? 'bg-green-400 text-green-200' : 'bg-red-500 text-red-100']"
-                    class="bg-red-100 text-xs font-medium px-2.5 py-1.5 rounded-full">{{
+                    class="text-xs font-medium px-2.5 py-1.5 rounded-full">{{
                     paymentStatus(order.paymentStatus)
                   }}</span>
               </div>
-              <div class="flex flex-row justify-between py-2">
+              <div class="flex flex-row justify-between py-2" v-if="order.paymentType !== null">
                 <p>Payment Type</p>
-                <p>{{ order.paymentType }}</p>
+                <p>{{ paymentType(order.paymentType) }}</p>
               </div>
 
             </div>
