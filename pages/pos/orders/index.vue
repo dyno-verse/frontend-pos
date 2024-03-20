@@ -25,7 +25,7 @@
               </div>
             </form>
             <button type="button"
-                    class="flex flex-row  justify-center space-x-2  text-white bg-red-50 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-4 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    class="flex flex-row  justify-center space-x-2  text-white bg-red-50 font-medium rounded-lg text-sm px-5 py-4 me-2 mb-2">
               <svg class="w-6 h-6  text-red-500 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                    width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
@@ -100,8 +100,9 @@
               <div class="flex flex-row justify-between py-2">
                 <p>Kitchen Status</p>
                 <span
-                    class="bg-green-200 text-green-700 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-gray-700 dark:text-gray-300">{{
-                    order.kitchenStatus
+                    :class="[ kitchenStatusColors(order.kitchenStatus)]"
+                    class="text-green-700 text-xs text-white font-medium px-2.5 py-1.5 rounded-full">{{
+                    kitchenStatusState(order.kitchenStatus)
                   }}</span>
               </div>
               <div class="flex flex-row justify-between py-2">
@@ -111,8 +112,9 @@
               <div class="flex flex-row justify-between py-2">
                 <p>Payment Status</p>
                 <span
-                    class="bg-red-100 text-red-500 text-xs font-medium px-2.5 py-1 rounded-full dark:bg-gray-700 dark:text-gray-300">{{
-                    order.paymentStatus
+                    :class="[ order.paymentStatus === PaymentTypes.PAID ? 'bg-green-400 text-green-200' : 'bg-red-500 text-red-100']"
+                    class="bg-red-100 text-xs font-medium px-2.5 py-1.5 rounded-full">{{
+                    paymentStatus(order.paymentStatus)
                   }}</span>
               </div>
               <div class="flex flex-row justify-between py-2">
@@ -189,6 +191,7 @@ const order = ref({} as IOrders)
 const branchId = '340328b2-cec0-4c5c-ba57-37a0f33dcf66'
 const selectedOrderId = ref('')
 import {format} from 'money-formatter'
+import {KitchenStatus} from "~/repository/models/ApiResponse";
 
 onMounted(() => {
   getAllOrders()
@@ -258,6 +261,32 @@ const paymentTypeColors = (option: string) => {
       return 'bg-orange-400'
     default:
       return 'bg-lime-400'
+  }
+}
+
+const kitchenStatusState = (status: string) => {
+  switch (status.toUpperCase()) {
+    case KitchenStatus.NOT_STARTED:
+      return "Not started"
+    case KitchenStatus.PREPARING:
+      return "Preparing"
+    case KitchenStatus.READY_TO_SERVE:
+      return "Ready to serve"
+    default:
+      return 'Served'
+  }
+}
+
+const kitchenStatusColors = (status: string) => {
+  switch (status.toUpperCase()) {
+    case KitchenStatus.NOT_STARTED:
+      return 'bg-orange-400'
+    case KitchenStatus.PREPARING:
+      return 'bg-yellow-400'
+    case KitchenStatus.READY_TO_SERVE:
+      return 'bg-green-400'
+    default:
+      return 'bg-blue-400'
   }
 }
 
