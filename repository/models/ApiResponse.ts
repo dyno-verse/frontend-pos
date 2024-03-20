@@ -185,6 +185,6 @@ interface IOrderItems {
 export interface IPayment {
     paymentType: string
     paymentStatus: string
-    paymentReference: string
+    paymentReference?: string
 }
 

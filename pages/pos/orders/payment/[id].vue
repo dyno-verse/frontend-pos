@@ -77,12 +77,12 @@
 
       <div class="col-span-3 h-screen bg-white border-l p-5">
 
-        <div class="h-[380px]">
+        <div class="h-[380px]" v-if="selectedPaymentType === PaymentType.CASH">
 
           <div class="">
             <div class="flex flex-row justify-between mb-2 items-center">
               <div>
-                <h3>Amount Recieved</h3>
+                <h3>Amount Received</h3>
                 <p class="text-gray-500 text-sm">Select the preferred payment method</p>
               </div>
               <h3>{{ format('GHC', noteSelected) }}</h3>
@@ -92,7 +92,7 @@
 
 
           <!--Show when the selected type is CASH-->
-          <div class="grid grid-cols-3 gap-4" v-if="selectedPaymentType === PaymentType.CASH">
+          <div class="grid grid-cols-3 gap-4">
             <div v-for="note in cashNotes" class="font-medium bg-red-50 py-4 rounded-lg text-center cursor-pointer"
                  :class="[noteSelected === note ? 'bg-red-500 text-white' : 'text-red-500']"
                  @click="cashNoteSelected(note)">
@@ -105,6 +105,31 @@
             </div>
           </div>
         </div>
+
+        <div class=""
+             v-if="selectedPaymentType === PaymentType.CARD || selectedPaymentType === PaymentType.MOBILE_MONEY">
+          <div class="">
+            <div class="flex flex-row justify-between mb-2 items-center">
+              <div>
+                <h3>Payment Reference</h3>
+                <p class="text-gray-500 text-sm">Select the preferred payment method</p>
+              </div>
+            </div>
+            <hr class="my-4">
+          </div>
+
+          <input type="text"
+                 v-model="paymentReference"
+                 placeholder="Enter Reference ID"
+                 class="block  w-full text-right p-4 my-2 text-gray-900 border-transparent  bg-gray-50 text-3xl">
+
+          <button type="button"
+                  @click="chargeOrder()"
+                  class="my-4 focus:outline-none text-white bg-red-500 w-full hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-lg px-5 py-4 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+            Charge
+          </button>
+        </div>
+
 
         <!--Numberpad-->
         <div class="" v-if="selectedPaymentType === PaymentType.CASH">
@@ -144,9 +169,10 @@ const {$api} = useNuxtApp()
 const isPending = ref(true)
 const order = ref({} as IOrders)
 const snackbar = useSnackbar()
-const paymentReference = ref('')
+const paymentReference = ref(null)
 const noteSelected = ref('0')
 import {Calculator} from '~/helpers/calculator';
+
 const calculator = new Calculator();
 const currentValue = ref<number>(calculator.getCurrentValue());
 import {format} from 'money-formatter';
