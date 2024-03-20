@@ -85,7 +85,7 @@
                 <h3>Amount Recieved</h3>
                 <p class="text-gray-500 text-sm">Select the preferred payment method</p>
               </div>
-              <h3>GHS {{ noteSelected }}</h3>
+              <h3>{{ format('GHC', noteSelected) }}</h3>
             </div>
             <hr class="my-4">
           </div>
@@ -101,19 +101,21 @@
 
             <div class="col-span-3 flex flex-row justify-between bg-gray-50 font-medium p-3">
               <p>Change</p>
-              <p>GHS {{ displayCashChange(noteSelected, order.total) }}</p>
+              <p>{{ format('GHC', displayCashChange(noteSelected, order.total)) }}</p>
             </div>
           </div>
         </div>
 
         <!--Numberpad-->
-        <div class="">
+        <div class="" v-if="selectedPaymentType === PaymentType.CASH">
           <input type="text"
-                 v-model="paymentReference"
-                 class="block w-full p-4 my-2 text-gray-900 border-transparent  bg-gray-50 text-base focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                 :value="format('',currentValue)"
+                 disabled readonly
+                 class="block  w-full text-right p-4 my-2 text-gray-900 border-transparent  bg-gray-50 text-3xl">
 
           <div class="grid grid-cols-3 gap-4">
-            <div v-for="num in numberPad" class="bg-gray-50 p-7 text-center rounded-lg">
+            <div v-for="num in numberPad" class="bg-gray-50 p-7 text-center rounded-lg"
+                 @click="onNumberPadClicked(num)">
               <p :class="[num.toLowerCase() === 'c' ? 'text-red-500 font-bold' : '']" class="text-2xl">{{ num }}</p>
             </div>
           </div>
@@ -144,15 +146,13 @@ const order = ref({} as IOrders)
 const snackbar = useSnackbar()
 const paymentReference = ref('')
 const noteSelected = ref('0')
+import {Calculator} from '~/helpers/calculator';
+const calculator = new Calculator();
+const currentValue = ref<number>(calculator.getCurrentValue());
 import {format} from 'money-formatter';
 
 
 onMounted(() => {
-  // if (navigator.onLine) {
-  //   console.log("online")
-  // } else {
-  //   console.log("offline")
-  // }
 
   getOrder(orderId.toString())
 })
@@ -221,6 +221,38 @@ const chargeOrder = () => {
   }).catch(error => {
   })
 }
+
+const onNumberPadClicked = (number: string) => {
+  switch (number.toLowerCase()) {
+    case 'c':
+      clear()
+      return;
+    case '.':
+      appendDecimal();
+      return;
+    default:
+      appendDigit(parseInt(number))
+      // numberPadValues.value.push(number)
+      return;
+
+  }
+}
+
+
+const appendDigit = (digit: number) => {
+  calculator.appendDigit(digit);
+  currentValue.value = calculator.getCurrentValue();
+};
+
+const appendDecimal = () => {
+  calculator.appendDecimal();
+  currentValue.value = calculator.getCurrentValue();
+};
+
+const clear = () => {
+  calculator.clear();
+  currentValue.value = calculator.getCurrentValue();
+};
 
 </script>
 
