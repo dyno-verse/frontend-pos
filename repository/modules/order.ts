@@ -11,11 +11,15 @@ class OrdersModule extends HttpFactory {
     private RESOURCE = 'orders';
 
     async getAllOrders(branchId: string, kitchenStatus: KitchenStatus): Promise<IApiResponse<IOrders>> {
-        return await this.call<IApiResponse<IOrders>>('GET', `/${this.RESOURCE}/branch/${branchId}?kitchenStatus=${kitchenStatus}`)
+        return await this.call<IApiResponse<IOrders>>('GET', `/${this.RESOURCE}/kds/branch/${branchId}?kitchenStatus=${kitchenStatus}`)
     }
 
     async getOrders(branchId: string,): Promise<IApiResponse<IOrders>> {
         return await this.call<IApiResponse<IOrders>>('GET', `/${this.RESOURCE}/branch/${branchId}`)
+    }
+
+    async getOrdersFromKDS(branchId: string,): Promise<IApiResponse<IOrders>> {
+        return await this.call<IApiResponse<IOrders>>('GET', `/${this.RESOURCE}/kds/branch/${branchId}`)
     }
 
     async getOrder(orderId: string,): Promise<IApiResponse<IOrders>> {

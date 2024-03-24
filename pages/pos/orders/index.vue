@@ -265,29 +265,29 @@ const paymentTypeColors = (option: string) => {
 }
 
 const kitchenStatusState = (status: string) => {
-  switch (status.toUpperCase()) {
-    case KitchenStatus.NOT_STARTED:
-      return "Not started"
-    case KitchenStatus.PREPARING:
-      return "Preparing"
-    case KitchenStatus.READY_TO_SERVE:
-      return "Ready to serve"
-    default:
-      return 'Served'
-  }
+  // switch (status.toUpperCase()) {
+  //   case KitchenStatus.NOT_STARTED:
+  //     return "Not started"
+  //   case KitchenStatus.PREPARING:
+  //     return "Preparing"
+  //   case KitchenStatus.READY_TO_SERVE:
+  //     return "Ready to serve"
+  //   default:
+  //     return 'Served'
+  // }
 }
 
 const kitchenStatusColors = (status: string) => {
-  switch (status.toUpperCase()) {
-    case KitchenStatus.NOT_STARTED:
-      return 'bg-orange-400'
-    case KitchenStatus.PREPARING:
-      return 'bg-yellow-400'
-    case KitchenStatus.READY_TO_SERVE:
-      return 'bg-green-400'
-    default:
-      return 'bg-blue-400'
-  }
+  // switch (status.toUpperCase()) {
+    // case KitchenStatus.NOT_STARTED:
+    //   return 'bg-orange-400'
+    // case KitchenStatus.PREPARING:
+    //   return 'bg-yellow-400'
+    // case KitchenStatus.READY_TO_SERVE:
+    //   return 'bg-green-400'
+    // default:
+    //   return 'bg-blue-400'
+  // }
 }
 
 
