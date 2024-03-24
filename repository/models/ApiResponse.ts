@@ -115,45 +115,63 @@ export interface Iitem {
     ingredients: string[];
 }
 
+
 export interface IOrders {
     id: string
     branchId: string
     businessId: string
-    orderItems: OrderItem[]
-    paymentType: any
-    paymentStatus: string
-    kitchenStatus: string
     orderNumber: number
     kitchenNote: string
     tableNumber: number
-    subTotal: number
+    orderItems: OrderItem[]
     feeItems: any[]
+    subTotal: number
     total: number
+    // @ts-ignore
+    paymentType: string
+    paymentStatus: string
+    orderStatus: string
+    serviceType: string
 }
 
 export interface OrderItem {
     item: Item
     quantity: number
     total: number
+    kitchenStatus: string
 }
 
-// @ts-ignore
 export interface Item {
     id: string
     name: string
     description: string
     price: number
-    // @ts-ignore
-    ingredients: any[]
-    // @ts-ignore
-    imageUrl: string
+    ingredients: string[]
+    imageUrl?: string
     color?: string
     createdAt: string
     updatedAt: string
 }
 
+
+// // @ts-ignore
+// export interface Item {
+//     id: string
+//     name: string
+//     description: string
+//     price: number
+//     // @ts-ignore
+//     ingredients: any[]
+//     // @ts-ignore
+//     imageUrl: string
+//     color?: string
+//     createdAt: string
+//     updatedAt: string
+// }
+
 export interface IKitchenStatus {
-    kitchenStatus: string
+    kitchenStatus: string,
+    itemIds: string[]
 }
 
 // NOT_STARTED,PREPARING,READY_TO_SERVE
