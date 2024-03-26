@@ -297,6 +297,7 @@ import {IOrders, OrderItem} from "~/repository/models/ApiResponse";
 
 definePageMeta({
   layout: "pos",
+  middleware: "auth"
 });
 const {$api} = useNuxtApp();
 const businessInfo = ref({} as IBusinessInfo)

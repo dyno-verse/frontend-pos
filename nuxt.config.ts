@@ -13,24 +13,26 @@ export default defineNuxtConfig({
         buildAssetsDir: 'assets',
         pageTransition: {name: 'page', mode: 'out-in'}
     },
+    routeRules: {
+        '/': {redirect: '/login'},
+    },
     devtools: {enabled: true},
     modules: [
         '@nuxtjs/tailwindcss',
         'nuxt-snackbar',
-        // '@nuxtjs/dayjs'
+        '@sidebase/nuxt-auth',
     ],
     snackbar: {
         bottom: true,
         right: true,
         duration: 5000
-    }
-    // auth: {
-    //     // origin: process.env.ORIGIN,
-    //     isEnabled: true,
-    //     // globalAppMiddleware: true,
-    //     origin: 'https://business.dynomenu.com',
-    // }
-    ,
+    },
+    auth: {
+        // origin: process.env.ORIGIN,
+        isEnabled: true,
+        globalAppMiddleware: true,
+        origin: 'https://business.dynomenu.com',
+    },
     css: ['~/assets/css/main.css'],
     postcss: {
         plugins: {

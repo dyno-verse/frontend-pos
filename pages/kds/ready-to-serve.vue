@@ -60,8 +60,15 @@ onMounted(() => {
 })
 
 const updateOrderStatus = (orderId: string, position: number) => {
+
+  let items = []
+  orders.value[0].orderItems.forEach(order => {
+    items.push(order.item.id)
+  })
+
   const request: IKitchenStatus = {
-    kitchenStatus: KitchenStatus.SERVED
+    kitchenStatus: KitchenStatus.SERVED,
+    itemIds: items
   }
   orders.value.splice(position, 1)
 
