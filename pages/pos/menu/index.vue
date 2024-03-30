@@ -183,7 +183,11 @@
             </div>
             <hr class="my-2">
             <div class="flex flex-row justify-center my-4 space-x-2">
-              <div class="bg-red-50 p-5 w-1/2 text-center flex flex-col items-center rounded-lg">
+
+              <div :class="createOrderModel.serviceType === ServiceTypes.DINE_IN ? 'bg-red-50' :'bg-gray-50'"
+                   @click="selectServiceType(ServiceTypes.DINE_IN)"
+                   class="p-5 w-1/2 text-center cursor-pointer flex flex-col items-center rounded-lg">
+
                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                      width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-width="2"
@@ -193,7 +197,10 @@
                 <p>Eat In</p>
               </div>
 
-              <div class="bg-gray-50 p-5 w-1/2 text-center flex flex-col items-center rounded-lg">
+              <div
+                  @click="selectServiceType(ServiceTypes.TAKE_OUT)"
+                  :class="createOrderModel.serviceType === ServiceTypes.TAKE_OUT ? 'bg-red-50' :'bg-gray-50'"
+                  class="p-5 w-1/2 text-center cursor-pointer flex flex-col items-center rounded-lg">
                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                      width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -202,6 +209,7 @@
 
                 <p>Takeout</p>
               </div>
+
             </div>
 
             <button type="button"
@@ -325,11 +333,13 @@ const createOrderModel = ref({
   orderItems: [],
   branchId: branchId,
   businessId: businessId,
-  tableNumber: 1
+  tableNumber: 1,
+  serviceType: ServiceTypes.DINE_IN
 })
 import {format} from 'money-formatter';
 import debounce from 'lodash.debounce'
 import {Dropdown, DropdownOptions, Modal} from "flowbite";
+import {ServiceTypes} from "~/repository/models/ApiResponse";
 
 
 onMounted(() => {
@@ -403,6 +413,10 @@ const selectMenu = (menuId: string) => {
   selectedViewType.value = ViewTypes.CATEGORIES
   selectedMenuId.value = menuId
   getDetailedMenu(menuId)
+}
+
+const selectServiceType = (serviceType: ServiceTypes) => {
+  createOrderModel.value.serviceType = serviceType
 }
 
 watch(search, debounce(() => {
@@ -527,6 +541,10 @@ const createOrder = () => {
     })
     router.push(`/pos/orders/payment/${data.data.id}`)
   }).catch(error => {
+    snackbar.add({
+      type: 'error',
+      text: error.data.errorMessages
+    })
   })
 }
 
