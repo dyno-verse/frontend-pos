@@ -12,15 +12,16 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxtjs/tailwindcss": "^6.8.0",
+    "@sidebase/nuxt-auth": "^0.7.0",
     "@types/lodash.debounce": "^4.0.9",
     "nuxt": "^3.7.3"
   },
   "dependencies": {
     "@auth/core": "^0.9.0",
+    "@nuxtjs/auth-next": "^5.0.0-1667386184.dfbbb54",
     "@nuxtjs/dayjs": "^1.4.1",
     "@nuxtjs/moment": "^1.6.1",
     "@pinia/nuxt": "^0.5.1",
-    "@sidebase/nuxt-auth": "^0.6.0-beta.6",
     "@vee-validate/nuxt": "^4.11.8",
     "apexcharts": "^3.47.0",
     "flowbite": "^1.8.1",

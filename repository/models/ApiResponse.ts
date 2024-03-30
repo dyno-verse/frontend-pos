@@ -187,6 +187,11 @@ export enum PaymentTypes {
     UNPAID = 'UNPAID',
 }
 
+export enum ServiceTypes {
+    TAKE_OUT = 'TAKE_OUT',
+    DINE_IN = 'DINE_IN'
+}
+
 export interface IOrder {
     businessId: string
     branchId: string
