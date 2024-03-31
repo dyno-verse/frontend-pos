@@ -7,6 +7,26 @@ export default NuxtAuthHandler({
         signIn: '/login',
         signOut: '/login',
     },
+    callbacks: {
+        // Callback when the JWT is created / updated, see https://next-auth.js.org/configuration/callbacks#jwt-callback
+        jwt: async ({token, user}) => {
+            const isSignIn = !!user;
+            if (isSignIn) {
+                token.jwt = user ? (user as any).access_token || 'a' : 'b';
+                token.id = user ? user.id || '' : '';
+                token.role = user ? (user as any).role || '' : '';
+                token.businessId = user ? (user as any).businessId || '' : '';
+            }
+            return Promise.resolve(token);
+        },
+        // Callback whenever session is checked, see https://next-auth.js.org/configuration/callbacks#session-callback
+        session: async ({session, token}) => {
+            (session as any).role = token.role;
+            (session as any).access_token = token.jwt;
+            (session as any).businessId = token.businessId;
+            return Promise.resolve(session);
+        },
+    },
     providers: [
         // @ts-expect-error
         CredentialsProvider.default({
@@ -30,15 +50,21 @@ export default NuxtAuthHandler({
                 })
 
                 if (data) {
-                    // console.log(data)
-                    // token.token = data.token
-                    data.token = "djdjdjdjdjdjdd"
-                    data.email = "vim@gmail.com"
-                    return data
+                    // return data
+                    return {
+                        name: data.firstName + " " + data.lastName,
+                        email: data.email,
+                        access_token: data.accessToken,
+                        role: data.role,
+                        businessId: data.businesses[0].id
+                    };
                 }
-
-                return null
-
+                else {
+                    throw createError({
+                        statusCode: 403,
+                        statusMessage: "Credentials not working",
+                    });
+                }
             }
         })
     ]

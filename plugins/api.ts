@@ -20,11 +20,18 @@ interface IApiInstance {
 
 // @ts-ignore
 export default defineNuxtPlugin(nuxtApp => {
+    const {data, signOut, getSession} = useAuth()
+
+    let token = ''
+    if (data.value !== null) {
+        token = data.value.access_token
+    }
+
 
     const fetchOptions: { headers: { Authorization: string; Accept: string }; baseURL: string } = {
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkMWE0NTAzZC02Mjc1LTRjMzAtYWIxMC0yZGE4MTQ4OGRmMjgiLCJlbWFpbCI6Im1heGNvZmllQGdtYWlsLmNvbSIsImlhdCI6MTcxMTMyMTc1NCwiZXhwIjoxNzQyODc5MzU0fQ.khm_Z25VGAtfQfW0vJQxiVWqNvQEWNAHgADLO9mjS_U'
+            'Authorization': 'Bearer ' + token
         },
         baseURL: "https://api.dynomenu.com",
     }
