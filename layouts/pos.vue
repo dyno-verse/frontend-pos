@@ -17,6 +17,7 @@
           </svg>
         </button>
 
+        {{ data }}
 
       </div>
     </div>
@@ -44,7 +45,7 @@
 
 <script lang="ts" setup>
 
-const {data, signOut} = useAuth()
+// const {data, signOut, getSession} = useAuth()
 
 
 const pages = [

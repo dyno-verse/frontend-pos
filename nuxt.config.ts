@@ -32,6 +32,16 @@ export default defineNuxtConfig({
         isEnabled: true,
         globalAppMiddleware: true,
         origin: 'https://business.dynomenu.com',
+        // provider: {
+        //     type: 'local',
+        //     endpoints: {
+        //         getSession: {path: '/user/profile', method: 'get'}
+        //     },
+        //     token: {
+        //         signInResponseTokenPointer: '/accessToken'
+        //     },
+        //     sessionDataType: {}
+        // }
     },
     css: ['~/assets/css/main.css'],
     postcss: {
@@ -40,15 +50,5 @@ export default defineNuxtConfig({
             autoprefixer: {},
         },
     },
-    // colorMode: {
-    //     preference: 'system', // default value of $colorMode.preference
-    //     fallback: 'light', // fallback value if not system preference found
-    //     // hid: 'nuxt-color-mode-script',
-    //     // globalName: '__NUXT_COLOR_MODE__',
-    //     // componentName: 'ColorScheme',
-    //     // classPrefix: '',
-    //     classSuffix: '',
-    //     storageKey: 'nuxt-color-mode'
-    // }
     ssr: false
 })
