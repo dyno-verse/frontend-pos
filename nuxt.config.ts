@@ -21,6 +21,7 @@ export default defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         'nuxt-snackbar',
         '@sidebase/nuxt-auth',
+        'nuxt-primevue'
     ],
     snackbar: {
         bottom: true,
@@ -43,7 +44,7 @@ export default defineNuxtConfig({
         //     sessionDataType: {}
         // }
     },
-    css: ['~/assets/css/main.css'],
+    css: ['~/assets/css/main.css', 'primevue/resources/themes/aura-light-green/theme.css'],
     postcss: {
         plugins: {
             tailwindcss: {},

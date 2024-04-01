@@ -1,11 +1,10 @@
 <template>
   <div class="h-screen h-lvh">
-    <div class="bg-white border-b h-16 w-screen static absolute top-0 left-0">
+    <div class="bg-white border-b h-16 w-screen static fixed z-20 top-0 left-0">
       <div class="flex justify-between px-4 py-2 space-x-2">
         <div>
           <h1 class="text-2xl"></h1>
         </div>
-
 
         <button type="button"
                 @click="signOut()"
@@ -24,7 +23,7 @@
       <slot/>
     </div>
 
-    <div class="bg-white border-t h-16 w-screen absolute bottom-0 left-0">
+    <div class="bg-white border-t h-16 w-screen fixed bottom-0 left-0">
       <div class="grid grid-cols-3 justify-items-center justify-between">
         <NuxtLink active-class="text-red-500 border-t-4 border-red-500 rounded-t" v-for="page in pages" :to="page.url">
           <div class="flex flex-row self-center text-center space-x-2 p-5">
@@ -42,6 +41,7 @@
 </template>
 
 <script lang="ts" setup>
+import Button from 'primevue/button';
 
 const {data, signOut, getSession} = useAuth()
 
