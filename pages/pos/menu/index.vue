@@ -1,8 +1,8 @@
 <template>
-  <div class="w-screen bg-white">
-    <div class="grid grid-cols-10 justify-center gap-x-4 pt-16 mt-2">
+  <div class="w-screen static relative bg-white overscroll-none">
+    <div class="grid grid-cols-10 justify-center gap-x-4 pt-16 relative h-screen overscroll-none">
 
-      <div class="static col-span-2 h-full overflow-y-auto border-r border-gray-200 ">
+      <div class="static col-span-2 overflow-y-auto border-r border-gray-200">
 
         <div v-if="!isMenusPending"
              class="bg-gray-50 rounded-r-lg px-5 py-6 mb-2 cursor-pointer"
@@ -17,9 +17,9 @@
 
       </div>
 
-      <div class="col-span-5 h-full bg-white overflow-y-auto">
-        <div class="mb-4 mt-2">
+      <div class="col-span-5 h-screen bg-white relative flex flex-col">
 
+        <div class="absolute top-0 left-0 z-10 right-0 mb-4 w-full mt-3">
           <div>
             <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
             <div class="relative">
@@ -38,9 +38,8 @@
           </div>
 
         </div>
-        <div>
 
-
+        <div class="overflow-y-scroll mt-20">
           <div v-if="!isPending && ViewTypes.CATEGORIES === selectedViewType" class="grid grid-cols-3 gap-4">
             <!---category-->
             <div v-if="menuDetails.categories.length !== 0"
