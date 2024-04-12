@@ -19,7 +19,7 @@
 
       <div class="col-span-5 overflow-y-auto bg-white relative flex flex-col">
 
-        <div class="z-10 right-0 mb-4 w-full mt-3">
+        <div class="z-10 mb-4 w-full mt-3">
           <div>
             <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
             <div class="relative">
@@ -101,9 +101,9 @@
         </div>
       </div>
 
-      <div class="relative right-0 col-span-3 h-full border-l overflow-y-auto">
-        <div class="p-5">
-          <div class="">
+      <div class="relative col-span-3 h-full border-l overflow-y-auto">
+        <div class="p-5 flex flex-col">
+          <div class="self-start absolute top-0 left-0 right-0 p-5 w-full">
             <div class="flex flex-row justify-between">
               <h2 class="text-lg">Order Details</h2>
 
@@ -117,7 +117,7 @@
             <hr class="my-2">
           </div>
 
-          <div class="overflow-y-scroll h-[450px]">
+          <div class="overflow-y-scroll max-h-screen self-center mt-10 w-full">
             <div class="flex flex-row justify-between items-center my-4" v-for="(cartItem, index) in cartItems">
               <div class="flex-col flex">
                 <h3>{{ cartItem.name }}</h3>
@@ -162,7 +162,7 @@
             </div>
           </div>
 
-          <div class="static bottom-0 left-0">
+          <div class="self-end absolute bottom-0 left-0 w-full p-5 mb-12">
             <hr class="my-2">
             <div class="flex flex-row justify-between my-1">
               <p>Subtotal</p>

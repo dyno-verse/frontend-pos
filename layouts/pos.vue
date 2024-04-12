@@ -24,7 +24,7 @@
     </div>
 
     <div class="bg-white border-t h-16 w-screen fixed bottom-0 left-0">
-      <div class="grid grid-cols-3 justify-items-center justify-between">
+      <div class="grid grid-cols-2 justify-items-center justify-between">
         <NuxtLink active-class="text-red-500 border-t-4 border-red-500 rounded-t" v-for="page in pages" :to="page.url">
           <div class="flex flex-row self-center text-center space-x-2 p-5">
             <svg class="w-6 h-6 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -57,11 +57,11 @@ const pages = [
     icon: '',
     url: '/pos/orders'
   },
-  {
-    name: 'Settings',
-    icon: '',
-    url: '/pos/settings'
-  }
+  // {
+  //   name: 'Settings',
+  //   icon: '',
+  //   url: '/pos/settings'
+  // }
 ]
 
 </script>

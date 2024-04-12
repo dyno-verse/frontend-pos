@@ -49,7 +49,7 @@ const mySignInHandler = async ({email, password}: { email: string, password: str
     // Do your custom error handling here
     snackbar.add({
       type: 'error',
-      text: 'The Judith is jfhhds jjf'
+      text: 'Sorry! Authentication failed'
     })
   } else {
     // No error, continue with the sign in, e.g., by following the returned redirect:
@@ -61,7 +61,7 @@ const mySignInHandler = async ({email, password}: { email: string, password: str
 definePageMeta({
   auth: {
     unauthenticatedOnly: true,
-    navigateAuthenticatedTo: '/pos/menu',
+    navigateAuthenticatedTo: '/set-up',
   }
 })
 

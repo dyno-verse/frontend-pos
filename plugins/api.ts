@@ -7,6 +7,7 @@ import BusinessModule from "~/repository/modules/business";
 import MenuModule from "~/repository/modules/menu";
 import CategoryModule from "~/repository/modules/category";
 import ItemModule from "~/repository/modules/item";
+import UserModule from "~/repository/modules/user";
 
 
 /** ApiInstance interface provides us with good typing */
@@ -16,6 +17,7 @@ interface IApiInstance {
     menu: MenuModule,
     category: CategoryModule,
     item: ItemModule
+    user: UserModule
 }
 
 // @ts-ignore
@@ -45,7 +47,8 @@ export default defineNuxtPlugin(nuxtApp => {
         business: new BusinessModule(apiFetcher),
         menu: new MenuModule(apiFetcher),
         category: new CategoryModule(apiFetcher),
-        item: new ItemModule(apiFetcher)
+        item: new ItemModule(apiFetcher),
+        user: new UserModule(apiFetcher)
     };
 
     return {
