@@ -35,7 +35,7 @@
             </button>
           </div>
         </div>
-        <div v-if="!isPending" class="h-36 rounded-lg text-gray-500 m-4 p-3 border border-gray-200 cursor-pointer"
+        <div v-if="!isPending" class="h-36 rounded-lg overflow-y-scroll text-gray-500 m-4 p-3 border border-gray-200 cursor-pointer"
              :class="[selectedOrderId === order.id  ? 'bg-red-50 border-red-100 text-gray-900' : 'bg-white']"
              @click="onOrderItemSelected(order.id)"
              v-for="order in orders">
